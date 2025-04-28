@@ -147,8 +147,7 @@ void ModelPart::loadSTL( QString fileName ) {
     /* 3. Initialise the part's vtkActor and link to the mapper */
     actor = vtkNew<vtkActor>();
     actor->SetMapper(mapper);
-    actor->GetProperty()->SetColor(1, 0, 0.35);
-
+    actor->GetProperty()->SetColor(1., 0., 0.35);
     
 }
 

@@ -61,9 +61,9 @@ MainWindow::MainWindow(QWidget *parent)
     // Instantiates the root item "Model" into the part list and tree view
     QString name = QString("Model").arg(1);
     QString visible("true");
-    qint64 R(10);
+    qint64 R(255);
     qint64 G(0);
-    qint64 B(35);
+    qint64 B(90);
 
     ModelPart* childItem = new ModelPart({ name,visible,R,G,B });
     rootItem->appendChild(childItem);
@@ -139,9 +139,9 @@ void MainWindow::on_actionOpen_File_triggered()
 
     // Create a new model part item with default perameters and append it to the tree
     QString visible("true");
-    qint64 R(10);
+    qint64 R(255);
     qint64 G(0);
-    qint64 B(35);
+    qint64 B(90);
 
     ModelPart* childItem = new ModelPart({ fileName.section('/', -1),visible,R,G,B });
     QModelIndex index = ui->treeView->currentIndex();
