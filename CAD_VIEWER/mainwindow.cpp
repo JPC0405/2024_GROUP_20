@@ -129,34 +129,38 @@ void MainWindow::on_actionOpen_File_triggered()
     emit statusUpdateMessage(QString("Open File action triggered"),0);
 
     // Open a dialog box to select STL or text files
-    QString fileName = QFileDialog::getOpenFileName(
+    QStringList fileNames = QFileDialog::getOpenFileNames(
         this,
-        tr("Open File"),
+        tr("Open Files"),
         "C:\\",
         tr("STL Files(*.stl);;Text Files(*.txt)"));
 
-    emit statusUpdateMessage(QString(fileName),0);
+    //emit statusUpdateMessage(QString(fileName),0);
 
-    // Create a new model part item with default perameters and append it to the tree
-    QString visible("true");
-    qint64 R(255);
-    qint64 G(0);
-    qint64 B(90);
+    // for all items selected in the file directory
+    for (int i=0;i<fileNames.size();i++)
+    {
+        // Create a new model part item with default perameters and append it to the tree
+        QString visible("true");
+        qint64 R(255);
+        qint64 G(0);
+        qint64 B(90);
 
-    ModelPart* childItem = new ModelPart({ fileName.section('/', -1),visible,R,G,B });
-    QModelIndex index = ui->treeView->currentIndex();
-    ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-    selectedPart->appendChild(childItem);
+        ModelPart* childItem = new ModelPart({ fileNames[i].section('/', -1),visible,R,G,B });
+        QModelIndex index = ui->treeView->currentIndex();
+        ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
+        selectedPart->appendChild(childItem);
 
-    // Load the selected STL file and update status bar
-    childItem->loadSTL(fileName);
-    emit statusUpdateMessage(QString("Loaded STL File"+QString(fileName)), 0);
+        // Load the selected STL file and update status bar
+        childItem->loadSTL(fileNames[i]);
+        emit statusUpdateMessage(QString("Loaded STL File"+QString(fileNames[i])), 0);
 
-    // Add the loaded STL file to the renderer
-    renderer->AddActor(childItem->getActor());
+        // Add the loaded STL file to the renderer
+        renderer->AddActor(childItem->getActor());
 
-    // Update the render to show new model
-    updateRender();
+        // Update the render to show new model
+        updateRender();
+    }
 }
 
 
