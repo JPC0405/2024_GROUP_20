@@ -161,7 +161,8 @@ void ModelPart::loadSTL( QString fileName ) {
     vtkSmartPointer<vtkPlane> planeLeft = vtkSmartPointer<vtkPlane>::New ( ) ;
     double clipX = bounds[0] + (bounds[1] - bounds[0]) * 0.5;
     qDebug() << "clipX value:" << clipX;
-    // planeLeft->SetOrigin( getMinX(), 0.0 , 0.0 ) ;
+    qDebug()<<"Min X="<<getMinX();
+    //SetOrigin(X,Y,Z)
     planeLeft->SetOrigin( getMinX(), 0.0, 0.0 ) ;
     planeLeft->SetNormal ( 1.0, 0.0, 0.0 ) ;
 
@@ -169,20 +170,21 @@ void ModelPart::loadSTL( QString fileName ) {
     clipFilterL->SetInputConnection ( file->GetOutputPort ( ) ) ;
     clipFilterL->SetClipFunction( planeLeft.Get( ) ) ;
 
-    // // Set up the second clipping plane
-    // vtkSmartPointer<vtkPlane> planeRight = vtkSmartPointer<vtkPlane>::New();
-    // planeRight->SetOrigin(200.0, 0.0, 0.0);
-    // planeRight->SetNormal(-1.0, 0.0, 0.0); // Normal points along -x (keeps left side)
+    // Set up the second clipping plane
+    vtkSmartPointer<vtkPlane> planeRight = vtkSmartPointer<vtkPlane>::New();
+    qDebug()<<"Max X="<<getMaxX();
+    planeRight->SetOrigin(getMaxX(), 0.0, 0.0);
+    planeRight->SetNormal(-1.0, 0.0, 0.0); // Normal points along -x (keeps left side)
 
-    // vtkSmartPointer<vtkClipPolyData> clipFilterR = vtkSmartPointer<vtkClipPolyData>::New();
-    // clipFilterR->SetInputConnection(clipFilterL->GetOutputPort());
-    // clipFilterR->SetClipFunction(planeRight.Get());
+    vtkSmartPointer<vtkClipPolyData> clipFilterR = vtkSmartPointer<vtkClipPolyData>::New();
+    clipFilterR->SetInputConnection(clipFilterL->GetOutputPort());
+    clipFilterR->SetClipFunction(planeRight.Get());
 
 
     /* 2. Initialise the part's vtkMapper */
     mapper = vtkNew<vtkDataSetMapper>();
     //mapper->SetInputConnection(file->GetOutputPort());
-    mapper->SetInputConnection(clipFilterL->GetOutputPort( ));
+    mapper->SetInputConnection(clipFilterR->GetOutputPort( ));
 
 
 
@@ -190,13 +192,7 @@ void ModelPart::loadSTL( QString fileName ) {
     actor = vtkNew<vtkActor>();
     actor->SetMapper(mapper);
     actor->GetProperty()->SetColor(1, 0, 0.35);
-
-
-    
 }
-
-
-
 
 vtkSmartPointer<vtkActor> ModelPart::getActor() {
     // Returns the actor of the part

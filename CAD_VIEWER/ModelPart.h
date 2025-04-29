@@ -135,6 +135,7 @@ public:
       */
     //vtkActor* getNewActor();
 
+
 private:
     QList<ModelPart*>                           m_childItems;       /**< List (array) of child items */
     QList<QVariant>                             m_itemData;         /**< List (array of column data for item */
@@ -154,6 +155,7 @@ private:
     vtkColor3<unsigned char>                    colour;             /**< User defineable colour */
     float xMin;
     float xMax;
+
 };  
 
 
