@@ -104,7 +104,16 @@ void ModelPart::setColour(const unsigned char R, const unsigned char G, const un
     m_itemData.replace(3, G);
     m_itemData.replace(4, B);
 }
-
+void ModelPart::setClipX(float min, float max){
+    m_itemData.replace(5,min);
+    m_itemData.replace(6,max);
+}
+float ModelPart::getMinX(){
+    return m_itemData.at(5).toFloat();
+}
+float ModelPart::getMaxX(){
+    return m_itemData.at(6).toFloat();
+}
 unsigned char ModelPart::getColourR() {
     // Returns the R data val from column 2 
     return m_itemData.at(2).toInt();
@@ -138,10 +147,43 @@ void ModelPart::loadSTL( QString fileName ) {
 
     file = vtkNew<vtkSTLReader>();
     file->SetFileName(fileName.toLocal8Bit());
+    file->Update();
+
+    vtkSmartPointer<vtkPolyData> inputPolyData = file->GetOutput();
+    double bounds[6];
+    inputPolyData->GetBounds(bounds);
+    qDebug() << "Model Bounds:"
+             << "X: [" << bounds[0] << "," << bounds[1] << "]"
+             << "Y: [" << bounds[2] << "," << bounds[3] << "]"
+             << "Z: [" << bounds[4] << "," << bounds[5] << "]";
+    qDebug() << "Input Points:" << inputPolyData->GetNumberOfPoints();
+
+    vtkSmartPointer<vtkPlane> planeLeft = vtkSmartPointer<vtkPlane>::New ( ) ;
+    double clipX = bounds[0] + (bounds[1] - bounds[0]) * 0.5;
+    qDebug() << "clipX value:" << clipX;
+    // planeLeft->SetOrigin( getMinX(), 0.0 , 0.0 ) ;
+    planeLeft->SetOrigin( getMinX(), 0.0, 0.0 ) ;
+    planeLeft->SetNormal ( 1.0, 0.0, 0.0 ) ;
+
+    vtkSmartPointer<vtkClipPolyData> clipFilterL = vtkSmartPointer<vtkClipPolyData >::New ( ) ;
+    clipFilterL->SetInputConnection ( file->GetOutputPort ( ) ) ;
+    clipFilterL->SetClipFunction( planeLeft.Get( ) ) ;
+
+    // // Set up the second clipping plane
+    // vtkSmartPointer<vtkPlane> planeRight = vtkSmartPointer<vtkPlane>::New();
+    // planeRight->SetOrigin(200.0, 0.0, 0.0);
+    // planeRight->SetNormal(-1.0, 0.0, 0.0); // Normal points along -x (keeps left side)
+
+    // vtkSmartPointer<vtkClipPolyData> clipFilterR = vtkSmartPointer<vtkClipPolyData>::New();
+    // clipFilterR->SetInputConnection(clipFilterL->GetOutputPort());
+    // clipFilterR->SetClipFunction(planeRight.Get());
+
 
     /* 2. Initialise the part's vtkMapper */
-    mapper = vtkNew<vtkPolyDataMapper>();
-    mapper->SetInputConnection(file->GetOutputPort());
+    mapper = vtkNew<vtkDataSetMapper>();
+    //mapper->SetInputConnection(file->GetOutputPort());
+    mapper->SetInputConnection(clipFilterL->GetOutputPort( ));
+
 
 
     /* 3. Initialise the part's vtkActor and link to the mapper */
@@ -149,8 +191,12 @@ void ModelPart::loadSTL( QString fileName ) {
     actor->SetMapper(mapper);
     actor->GetProperty()->SetColor(1, 0, 0.35);
 
+
     
 }
+
+
+
 
 vtkSmartPointer<vtkActor> ModelPart::getActor() {
     // Returns the actor of the part

@@ -26,6 +26,9 @@
 #include <vtkActor.h>
 #include <vtkSTLReader.h>
 #include <vtkColor.h>
+#include <vtkPlane.h>
+#include <vtkClipDataSet.h>
+#include <vtkClipPolyData.h>
 
 class ModelPart {
 public:
@@ -98,11 +101,14 @@ public:
       * (0-255 RGB values as ints)
       */
     void setColour(const unsigned char R, const unsigned char G, const unsigned char B);
+    void setClipX(float min, float max);
 
     // Getters for the colours of the part
     unsigned char getColourR();
     unsigned char getColourG();
     unsigned char getColourB();
+    float getMinX();
+    float getMaxX();
 
     /** Set visible flag
       * @param isVisible sets visible/non-visible
@@ -146,6 +152,8 @@ private:
     vtkSmartPointer<vtkMapper>                  mapper;             /**< Mapper for rendering */
     vtkSmartPointer<vtkActor>                   actor;              /**< Actor for rendering */
     vtkColor3<unsigned char>                    colour;             /**< User defineable colour */
+    float xMin;
+    float xMax;
 };  
 
 

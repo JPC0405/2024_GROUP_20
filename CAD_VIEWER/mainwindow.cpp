@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent)
     qint64 G(0);
     qint64 B(35);
 
-    ModelPart* childItem = new ModelPart({ name,visible,R,G,B });
+    ModelPart* childItem = new ModelPart({ name,visible,R,G,B, 0., 1. });
     rootItem->appendChild(childItem);
 
     /* Test to check if tree view works
@@ -139,11 +139,11 @@ void MainWindow::on_actionOpen_File_triggered()
 
     // Create a new model part item with default perameters and append it to the tree
     QString visible("true");
-    qint64 R(10);
+    qint64 R(250);
     qint64 G(0);
     qint64 B(35);
 
-    ModelPart* childItem = new ModelPart({ fileName.section('/', -1),visible,R,G,B });
+    ModelPart* childItem = new ModelPart({ fileName.section('/', -1),visible,R,G,B,0.,1. });
     QModelIndex index = ui->treeView->currentIndex();
     ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
     selectedPart->appendChild(childItem);
@@ -169,12 +169,14 @@ void MainWindow::on_pushButton_2_clicked()
     QModelIndex index = ui->treeView->currentIndex();
     ModelPart *selectedPart = static_cast<ModelPart*>(index.internalPointer());
 
-    // Get data from selected part
+   // Get data from selected part
     QString name = selectedPart->data(0).toString();
     bool vis = selectedPart->data(1).toBool();
     qint64 R = selectedPart->getColourR();
     qint64 G = selectedPart->getColourG();
     qint64 B = selectedPart->getColourB();
+    float min = selectedPart->getMinX();
+    float max = selectedPart->getMaxX();
 
     // Set accessed data in dialog box
     dialog.setVisibility(vis);
@@ -182,6 +184,7 @@ void MainWindow::on_pushButton_2_clicked()
     dialog.set_R(R);
     dialog.set_G(G);
     dialog.set_B(B);
+    dialog.set_ClipX(min, max);
 
     // if the accept button is pressed
     if (dialog.exec() == QDialog::Accepted){
@@ -194,11 +197,15 @@ void MainWindow::on_pushButton_2_clicked()
         double n_R = dialog.get_R();
         double n_G = dialog.get_G();
         double n_B = dialog.get_B();
+        float minX = dialog.get_MinX();
+        float maxX = dialog.get_MaxX();
 
         // update the selected item
         selectedPart->setVisible(n_vis);
         selectedPart->setName(n_name);
         selectedPart->setColour(n_R,n_G,n_B);
+        selectedPart->setClipX(minX,maxX);
+
 
         // if an actor for the model part exists
         if (selectedPart->getActor()) {
@@ -210,6 +217,7 @@ void MainWindow::on_pushButton_2_clicked()
 
         //update child items
         updateChildren(selectedPart, vis, n_R, n_G, n_B);
+
         
     }
 
@@ -253,6 +261,7 @@ void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
     }
 }
 
+
 void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g, double b)
 {
     // for the number of children of the passed item
@@ -268,6 +277,8 @@ void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g,
         {
             childPart->getActor()->GetProperty()->SetColor(r / 255, g / 255, b / 255);
             childPart->getActor()->SetVisibility(vis);
+
+
         }
 
         // Recursivly run this function for any children of this model part
@@ -289,6 +300,7 @@ void MainWindow::updateRender() {
     renderer->GetActiveCamera()->Azimuth(30);
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
+
 
 }
 

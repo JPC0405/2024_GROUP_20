@@ -28,6 +28,9 @@ public:
     unsigned char get_G();
 
     void set_B(unsigned char B);
+    void set_ClipX(float min, float max);
+    float get_MinX();
+    float get_MaxX();
     unsigned char get_B();
 
 private slots:

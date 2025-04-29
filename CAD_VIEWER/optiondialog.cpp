@@ -77,3 +77,18 @@ unsigned char OptionDialog::get_B()
     unsigned char B = ui->spinBox_3->value();
     return B;
 }
+void OptionDialog::set_ClipX(float min, float max)
+{
+    ui->xMinBox->setValue(min);
+    ui->xMaxBox->setValue(max);
+}
+float OptionDialog::get_MinX()
+{
+    float x = ui->xMinBox->value();
+    return x;
+}
+float OptionDialog::get_MaxX()
+{
+    float x = ui->xMaxBox->value();
+    return x;
+}
