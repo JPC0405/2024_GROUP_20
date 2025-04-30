@@ -29,6 +29,7 @@
 #include <vtkPlane.h>
 #include <vtkClipDataSet.h>
 #include <vtkClipPolyData.h>
+#include <vtkDataSetMapper.h>
 
 class ModelPart {
 public:
@@ -134,6 +135,7 @@ public:
       * @return pointer to new actor
       */
     //vtkActor* getNewActor();
+    vtkSmartPointer<vtkDataSetMapper> applyClip();
 
 
 private:
