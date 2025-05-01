@@ -45,9 +45,12 @@ public:
 private:
     Ui::MainWindow *ui;
     ModelPartList* partList;
+    bool VR_ON = 0;
+
 
     vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
+    VRRenderThread VRthread;
 
 public slots:
     void handleButton();
@@ -61,6 +64,7 @@ private slots:
     void on_actionOpen_File_triggered();
     void on_pushButton_2_clicked();
     void on_actionItems_Options_triggered();
+    void on_pushButton_3_clicked();
 };
 
 

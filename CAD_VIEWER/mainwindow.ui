@@ -59,6 +59,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="text">
+         <string>Close VR Render</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Orientation::Horizontal</enum>

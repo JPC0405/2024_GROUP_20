@@ -119,12 +119,38 @@ void MainWindow::handleTreeClick(){
 void MainWindow::handleButton(){
     QMessageBox msgBox;
 
-    emit statusUpdateMessage(QString("VR Renderer Started"),0);
     //msgBox.exec();
-    VRRenderThread *VRthread = new VRRenderThread();
-    QModelIndex index = ui->treeView->currentIndex();
-    AddVRActors(index,VRthread);
-    VRthread->start();
+
+    if (VR_ON==0)
+    {
+        VR_ON=1;
+        VRRenderThread *VRthread = new VRRenderThread();
+        QModelIndex index = ui->treeView->currentIndex();
+        AddVRActors(index,VRthread);
+        VRthread->start();
+        emit statusUpdateMessage(QString("VR Renderer Started"),0);
+    }
+
+    else
+    {
+        emit statusUpdateMessage(QString("VR Renderer already running"),0);
+    }
+}
+
+
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    if(VR_ON==1)
+    {
+        VRthread.~VRRenderThread();
+        VR_ON=0;
+    }
+
+    else
+    {
+        emit statusUpdateMessage(QString("No VR Renderer running"),0);
+    }
 }
 
 void MainWindow::on_pushButton_2_clicked()
@@ -185,6 +211,8 @@ void MainWindow::on_pushButton_2_clicked()
         emit statusUpdateMessage(QString("Dialog rejected"),0);
     }
 }
+
+
 
 void MainWindow::on_actionOpen_File_triggered()
 {
@@ -328,6 +356,7 @@ void MainWindow::AddVRActors(const QModelIndex& index,VRRenderThread* thread) {
         }
     }
 }
+
 
 
 
