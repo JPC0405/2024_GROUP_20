@@ -168,6 +168,8 @@ vtkActor* ModelPart::getNewActor() {
      /* 1. Create new mapper */
 
     vtkNew<vtkPolyDataMapper> newMapper;
+    newMapper->SetInputConnection(file->GetOutputPort());
+
      
      /* 2. Create new actor and link to mapper */
 

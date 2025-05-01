@@ -100,7 +100,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
-
 // Destructor
 MainWindow::~MainWindow()
 {
@@ -302,12 +301,12 @@ void MainWindow::AddVRActors(const QModelIndex& index,VRRenderThread* thread) {
 
     //if a a valid index is passed
     if (index.isValid()) {
-        // Add the actor for the selected part to the renderer
+        // Add the actor for the selected part to the vr render thread
         ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
 
         if(selectedPart->getActor())
         {
-            thread->addActorOffline(selectedPart->getActor());
+            thread->addActorOffline(selectedPart->getNewActor());
         }
 
     }
