@@ -50,7 +50,7 @@ private:
 
     vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
-    VRRenderThread VRthread;
+    VRRenderThread* VRthread;
 
 public slots:
     void handleButton();
