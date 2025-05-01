@@ -30,6 +30,7 @@
 #include <vtkClipDataSet.h>
 #include <vtkClipPolyData.h>
 #include <vtkDataSetMapper.h>
+#include <vtkShrinkFilter.h>
 
 class ModelPart {
 public:
@@ -104,6 +105,7 @@ public:
       */
     void setColour(const unsigned char R, const unsigned char G, const unsigned char B);
     void setClip(float xmin, float xmax, float ymin,float ymax, float zmin, float zmax);
+    void setSize(float size);
 
     // Getters for the colours of the part
     unsigned char getColourR();
@@ -115,6 +117,7 @@ public:
     float getMaxY();
     float getMinZ();
     float getMaxZ();
+    float getSize();
 
     /** Set visible flag
       * @param isVisible sets visible/non-visible

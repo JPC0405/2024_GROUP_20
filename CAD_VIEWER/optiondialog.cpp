@@ -86,6 +86,10 @@ void OptionDialog::set_Clip(float xmin, float xmax, float ymin, float ymax, floa
     ui->zMinBox->setValue(zmin);
     ui->zMaxBox->setValue(zmax);
 }
+void OptionDialog::setSize(float size){
+    ui->sizeSlider->setValue(size);
+    qDebug()<<"1 Set size: "<<size;
+}
 float OptionDialog::get_MinX()
 {
     float x = ui->xMinBox->value();
@@ -115,4 +119,10 @@ float OptionDialog::get_MaxZ()
 {
     float z = ui->zMaxBox->value();
     return z;
+}
+
+float OptionDialog::getSize(){
+    float size = ui->sizeSlider->value();
+    qDebug()<<"2 Got size: "<<size;
+    return size;
 }

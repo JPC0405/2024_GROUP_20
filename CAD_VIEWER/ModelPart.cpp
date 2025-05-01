@@ -145,11 +145,19 @@ unsigned char ModelPart::getColourB() {
     // Returns the G data val from column 4 
     return m_itemData.at(4).toInt();
 }
+float ModelPart::getSize(){
+    qDebug()<<"6 got size: "<<m_itemData.at(11).toFloat();
+    return m_itemData.at(11).toFloat();
+}
+
 void ModelPart::setMapper(vtkSmartPointer<vtkDataSetMapper> inputMapper){
     mapper = inputMapper;
 }
 
-
+void ModelPart::setSize(float size){
+    m_itemData.replace(11,size);
+    qDebug()<<"7 set size: "<<size;
+}
 void ModelPart::setVisible(bool isVisible) {
     // Replace data in column 1 with the vis boolean
     m_itemData.replace(1, isVisible);
@@ -265,10 +273,15 @@ vtkSmartPointer<vtkDataSetMapper> ModelPart::applyClip(){//new function for clip
     clipFilterUpZ->SetInputConnection(clipFilterLowZ->GetOutputPort());
     clipFilterUpZ->SetClipFunction(planeUpperZ.Get());
 
+    vtkSmartPointer<vtkShrinkFilter>shrinkFilter = vtkSmartPointer<vtkShrinkFilter>::New();
+    shrinkFilter->SetInputConnection(clipFilterUpZ->GetOutputPort( ));
+    shrinkFilter->SetShrinkFactor(getSize()/100) ;
+    qDebug()<<"Size: "<<getSize()<<"%";
+    // shrinkFilter->Update();
 
     vtkSmartPointer<vtkDataSetMapper> newMapper = vtkSmartPointer<vtkDataSetMapper>::New();
     //mapper->SetInputConnection(file->GetOutputPort());
-    newMapper->SetInputConnection(clipFilterUpZ->GetOutputPort( ));
+    newMapper->SetInputConnection(shrinkFilter->GetOutputPort( ));
 
     return newMapper;
 }

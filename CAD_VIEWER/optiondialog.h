@@ -31,6 +31,7 @@ public:
     unsigned char get_B();
 
     void set_Clip(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
+    void setSize(float size);
     float get_MinX();
     float get_MaxX();
 
@@ -39,6 +40,8 @@ public:
 
     float get_MinZ();
     float get_MaxZ();
+
+    float getSize();
 
 
 private slots:

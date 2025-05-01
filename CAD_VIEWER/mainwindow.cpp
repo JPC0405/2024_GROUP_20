@@ -65,7 +65,7 @@ MainWindow::MainWindow(QWidget *parent)
     qint64 G(0);
     qint64 B(35);
 
-    ModelPart* childItem = new ModelPart({ name,visible,R,G,B, 0., 100., 0., 100., 0., 100. });
+    ModelPart* childItem = new ModelPart({ name,visible,R,G,B, 0., 100., 0., 100., 0., 100., 100 });
     rootItem->appendChild(childItem);
 
     /* Test to check if tree view works
@@ -143,7 +143,7 @@ void MainWindow::on_actionOpen_File_triggered()
     qint64 G(0);
     qint64 B(35);
 
-    ModelPart* childItem = new ModelPart({ fileName.section('/', -1),visible,R,G,B,0.,100.,0.,100.,0.,100. });
+    ModelPart* childItem = new ModelPart({ fileName.section('/', -1),visible,R,G,B,0.,100.,0.,100.,0.,100., 100 });
     QModelIndex index = ui->treeView->currentIndex();
     ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
     selectedPart->appendChild(childItem);
@@ -182,6 +182,7 @@ void MainWindow::on_pushButton_2_clicked()
     float ymax = selectedPart->getMaxY();
     float zmin = selectedPart->getMinZ();
     float zmax = selectedPart->getMaxZ();
+    float size = selectedPart->getSize();
     qDebug()<<"got data from selected part";
 
     // Set accessed data in dialog box
@@ -192,6 +193,8 @@ void MainWindow::on_pushButton_2_clicked()
     dialog.set_G(G);
     dialog.set_B(B);
     dialog.set_Clip(xmin, xmax, ymin, ymax, zmin, zmax);
+    dialog.setSize(size);
+    qDebug()<<"3 Set size: "<<size;
     qDebug()<<"set data in dialog box";
 
     // if the accept button is pressed
@@ -212,6 +215,8 @@ void MainWindow::on_pushButton_2_clicked()
         float maxY = dialog.get_MaxY();
         float minZ = dialog.get_MinZ();
         float maxZ = dialog.get_MaxZ();
+        float sizeF = dialog.getSize();
+        qDebug()<<"4 got size: "<<sizeF;
         qDebug()<<"got user choice";
 
         // update the selected item
@@ -220,7 +225,10 @@ void MainWindow::on_pushButton_2_clicked()
         selectedPart->setName(n_name);
         selectedPart->setColour(n_R,n_G,n_B);
         selectedPart->setClip(minX,maxX,minY,maxY,minZ,maxZ);
+        selectedPart->setSize(sizeF);
         selectedPart->setMapper(selectedPart->applyClip());
+
+        qDebug()<<"5 set size: "<<sizeF;
         qDebug()<<"updated selected item";
 
 
