@@ -28,10 +28,18 @@ public:
     unsigned char get_G();
 
     void set_B(unsigned char B);
-    void set_ClipX(float min, float max);
+    unsigned char get_B();
+
+    void set_Clip(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
     float get_MinX();
     float get_MaxX();
-    unsigned char get_B();
+
+    float get_MinY();
+    float get_MaxY();
+
+    float get_MinZ();
+    float get_MaxZ();
+
 
 private slots:
     void on_lineEdit_editingFinished();

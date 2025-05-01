@@ -77,10 +77,14 @@ unsigned char OptionDialog::get_B()
     unsigned char B = ui->spinBox_3->value();
     return B;
 }
-void OptionDialog::set_ClipX(float min, float max)
+void OptionDialog::set_Clip(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax)
 {
-    ui->xMinBox->setValue(min);
-    ui->xMaxBox->setValue(max);
+    ui->xMinBox->setValue(xmin);
+    ui->xMaxBox->setValue(xmax);
+    ui->yMinBox->setValue(ymin);
+    ui->yMaxBox->setValue(ymax);
+    ui->zMinBox->setValue(zmin);
+    ui->zMaxBox->setValue(zmax);
 }
 float OptionDialog::get_MinX()
 {
@@ -91,4 +95,24 @@ float OptionDialog::get_MaxX()
 {
     float x = ui->xMaxBox->value();
     return x;
+}
+float OptionDialog::get_MinY()
+{
+    float y = ui->yMinBox->value();
+    return y;
+}
+float OptionDialog::get_MaxY()
+{
+    float y = ui->yMaxBox->value();
+    return y;
+}
+float OptionDialog::get_MinZ()
+{
+    float z = ui->zMinBox->value();
+    return z;
+}
+float OptionDialog::get_MaxZ()
+{
+    float z = ui->zMaxBox->value();
+    return z;
 }
