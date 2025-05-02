@@ -21,6 +21,9 @@
 
 ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent )
     : m_itemData(data), m_parentItem(parent) {
+
+    actor = NULL;
+    file = NULL;
 }
 
 
@@ -156,7 +159,9 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
     return actor;
 }
 
-vtkActor* ModelPart::getNewActor() {
+vtkSmartPointer<vtkActor> ModelPart::getNewActor() {
+
+    if (!this->actor || !this->file) return NULL;
     /* This is a placeholder function that you will need to modify if you want to use it
      *
      * The default mapper/actor combination can only be used to render the part in
@@ -166,14 +171,12 @@ vtkActor* ModelPart::getNewActor() {
 
      
      /* 1. Create new mapper */
-
-    vtkNew<vtkPolyDataMapper> newMapper;
+    newMapper = vtkNew<vtkPolyDataMapper>();
     newMapper->SetInputConnection(file->GetOutputPort());
 
      
      /* 2. Create new actor and link to mapper */
-
-    vtkActor* newActor = vtkActor::New();
+    newActor = vtkNew<vtkActor>();
     newActor->SetMapper(newMapper);
      
      /* 3. Link the vtkProperties of the original actor to the new actor. This means

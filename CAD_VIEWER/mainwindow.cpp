@@ -98,32 +98,8 @@ MainWindow::MainWindow(QWidget *parent)
     }
     */
 
+    VRthread = NULL;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
 }
 
 // Destructor
@@ -152,7 +128,7 @@ void MainWindow::handleButton(){
         VR_ON=1;
         VRthread = new VRRenderThread();
         QModelIndex index = ui->treeView->currentIndex();
-        AddVRActors(index,VRthread);
+        AddVRActors(index);
         VRthread->start();
         emit statusUpdateMessage(QString("VR Renderer Started"),0);
     }
@@ -169,7 +145,7 @@ void MainWindow::on_pushButton_3_clicked()
 {
    if(VR_ON==1)
    {
-        VRthread->issueCommand(0, 0);
+        if( VRthread ) VRthread->issueCommand(0, 0);
         VR_ON = 0;
         emit statusUpdateMessage(QString("VR Renderer closed"), 0);
     }
@@ -188,6 +164,8 @@ void MainWindow::on_pushButton_2_clicked()
     // Access currently selected model part
     QModelIndex index = ui->treeView->currentIndex();
     ModelPart *selectedPart = static_cast<ModelPart*>(index.internalPointer());
+
+    if (!selectedPart) return;
 
     // Get data from selected part
     QString name = selectedPart->data(0).toString();
@@ -248,6 +226,8 @@ void MainWindow::on_actionItems_Options_triggered()
     // Access currently selected model part
     QModelIndex index = ui->treeView->currentIndex();
     ModelPart *selectedPart = static_cast<ModelPart*>(index.internalPointer());
+
+    if (!selectedPart) return;
 
     // Get data from selected part
     QString name = selectedPart->data(0).toString();
@@ -324,17 +304,19 @@ void MainWindow::on_actionOpen_File_triggered()
         ModelPart* childItem = new ModelPart({ fileNames[i].section('/', -1),visible,R,G,B });
         QModelIndex index = ui->treeView->currentIndex();
         ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-        selectedPart->appendChild(childItem);
+        if (selectedPart) {
+            selectedPart->appendChild(childItem);
 
-        // Load the selected STL file and update status bar
-        childItem->loadSTL(fileNames[i]);
-        emit statusUpdateMessage(QString("Loaded STL File"+QString(fileNames[i])), 0);
+            // Load the selected STL file and update status bar
+            childItem->loadSTL(fileNames[i]);
+            emit statusUpdateMessage(QString("Loaded STL File" + QString(fileNames[i])), 0);
 
-        // Add the loaded STL file to the renderer
-        renderer->AddActor(childItem->getActor());
+            // Add the loaded STL file to the renderer
+            renderer->AddActor(childItem->getActor());
 
-        // Update the render to show new model
-        updateRender();
+            // Update the render to show new model
+            updateRender();
+        }
     }
 }
 
@@ -346,8 +328,9 @@ void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
     if (index.isValid()) {
         // Add the actor for the selected part to the renderer
         ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-        renderer->AddActor(selectedPart->getActor());
-        ;
+        if (selectedPart) {
+            renderer->AddActor(selectedPart->getActor());
+        }
     }
 
     // if no children exist for the passed item
@@ -404,26 +387,37 @@ void MainWindow::updateRender() {
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
 
-    VRthread->issueCommand(4,0);
-    QModelIndex index = ui->treeView->currentIndex();
-    AddVRActors(index,VRthread);
-    VRthread->issueCommand(5,0);
-
-
+    
+    if (VR_ON == 1)
+    {
+        if (VRthread) {
+            //VRthread->issueCommand(4, 0);
+            QModelIndex index = ui->treeView->currentIndex();
+            AddVRActors(index);
+            //VRthread->issueCommand(5, 0);
+        }
+    }
+    
 
 }
 
 
-void MainWindow::AddVRActors(const QModelIndex& index,VRRenderThread* thread) {
+void MainWindow::AddVRActors(const QModelIndex& index) {
 
     //if a a valid index is passed
     if (index.isValid()) {
         // Add the actor for the selected part to the vr render thread
         ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
 
-        if(selectedPart->getActor())
+        if(selectedPart && selectedPart->getActor())
         {
-            thread->addActorOffline(selectedPart->getNewActor());
+            
+            vtkSmartPointer<vtkActor> NewActor = selectedPart->getNewActor();
+            if (NewActor) {
+                NewActor->SetVisibility(selectedPart->getActor()->GetVisibility());
+                //if (VRthread)  VRthread->addActorOffline(NewActor);
+            }
+            
         }
 
     }
@@ -441,7 +435,7 @@ void MainWindow::AddVRActors(const QModelIndex& index,VRRenderThread* thread) {
         // for each item in the tree recursively run this function
         for (int i = 0; i < rows; i++)
         {
-            AddVRActors(partList->index(i, 0, index),thread);
+            AddVRActors(partList->index(i, 0, index));
         }
     }
 }
