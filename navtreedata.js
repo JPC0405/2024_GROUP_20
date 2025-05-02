@@ -24,9 +24,7 @@
 */
 var NAVTREE =
 [
-  [ "My Project", "index.html", [
-    [ "README", "md_README.html", null ]
-  ] ]
+  [ "My Project", "index.html", ]
 ];
 
 var NAVTREEINDEX =
