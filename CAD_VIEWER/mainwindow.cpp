@@ -5,7 +5,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDialog>
- #include <QTreeWidgetItemIterator>
+#include <QTreeWidgetItemIterator>
 #include <vtkrenderWindow.h>
 #include <vtkCylinderSource.h>
 #include <vtkPolyDataMapper.h>
@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent)
     qint64 G(0);
     qint64 B(90);
 
-    ModelPart* childItem = new ModelPart({ name,visible,R,G,B });
+    ModelPart* childItem = new ModelPart({ name,visible,R,G,B, 0., 100., 0., 100., 0., 100., 100 });
     rootItem->appendChild(childItem);
 
     /* Test to check if tree view works
@@ -165,7 +165,6 @@ void MainWindow::handleButton(){
         VRthread->start();
         emit statusUpdateMessage(QString("VR Renderer Started"),0);
     }
-
     else
     {
         emit statusUpdateMessage(QString("VR Renderer already running"),0);
@@ -200,18 +199,33 @@ void MainWindow::on_pushButton_2_clicked()
     if (!selectedPart) return;
 
     // Get data from selected part
+   // Get data from selected part
+    qDebug()<<"getting data from selected part";
     QString name = selectedPart->data(0).toString();
     bool vis = selectedPart->data(1).toBool();
     qint64 R = selectedPart->getColourR();
     qint64 G = selectedPart->getColourG();
     qint64 B = selectedPart->getColourB();
+    float xmin = selectedPart->getMinX();
+    float xmax = selectedPart->getMaxX();
+    float ymin = selectedPart->getMinY();
+    float ymax = selectedPart->getMaxY();
+    float zmin = selectedPart->getMinZ();
+    float zmax = selectedPart->getMaxZ();
+    float size = selectedPart->getSize();
+    qDebug()<<"got data from selected part";
 
     // Set accessed data in dialog box
+    qDebug()<<"setting data in dialog box";
     dialog.setVisibility(vis);
     dialog.set_name(name);
     dialog.set_R(R);
     dialog.set_G(G);
     dialog.set_B(B);
+    dialog.set_Clip(xmin, xmax, ymin, ymax, zmin, zmax);
+    dialog.setSize(size);
+    qDebug()<<"3 Set size: "<<size;
+    qDebug()<<"set data in dialog box";
 
     // if the accept button is pressed
     if (dialog.exec() == QDialog::Accepted){
@@ -219,16 +233,34 @@ void MainWindow::on_pushButton_2_clicked()
 
 
         // use get functions in dialog to get users choice
+        qDebug()<<"getting user choice";
         bool n_vis = dialog.getVisibility();
         QString n_name = dialog.get_name();
         double n_R = dialog.get_R();
         double n_G = dialog.get_G();
         double n_B = dialog.get_B();
+        float minX = dialog.get_MinX();
+        float maxX = dialog.get_MaxX();
+        float minY = dialog.get_MinY();
+        float maxY = dialog.get_MaxY();
+        float minZ = dialog.get_MinZ();
+        float maxZ = dialog.get_MaxZ();
+        float sizeF = dialog.getSize();
+        qDebug()<<"4 got size: "<<sizeF;
+        qDebug()<<"got user choice";
 
         // update the selected item
+        qDebug()<<"updating selected item";
         selectedPart->setVisible(n_vis);
         selectedPart->setName(n_name);
         selectedPart->setColour(n_R,n_G,n_B);
+        selectedPart->setClip(minX,maxX,minY,maxY,minZ,maxZ);
+        selectedPart->setSize(sizeF);
+        selectedPart->setMapper(selectedPart->applyClip());
+
+        qDebug()<<"5 set size: "<<sizeF;
+        qDebug()<<"updated selected item";
+
 
         // if an actor for the model part exists
         if (selectedPart->getActor()) {
@@ -240,6 +272,7 @@ void MainWindow::on_pushButton_2_clicked()
 
         //update child items
         updateChildren(selectedPart, vis, n_R, n_G, n_B);
+
         
     }
 
@@ -396,7 +429,7 @@ void MainWindow::on_actionOpen_File_triggered(){
         qint64 G(0);
         qint64 B(90);
 
-        ModelPart* childItem = new ModelPart({ fileNames[i].section('/', -1),visible,R,G,B });
+        ModelPart* childItem = new ModelPart({ fileNames[i].section('/', -1),visible,R,G,B, 0.,100.,0.,100.,0.,100.,100});
         QModelIndex index = ui->treeView->currentIndex();
         ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
         selectedPart->appendChild(childItem);
@@ -444,6 +477,7 @@ void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
     }
 }
 
+
 void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g, double b)
 {
     // for the number of children of the passed item
@@ -454,11 +488,15 @@ void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g,
         childPart->setVisible(vis);
         childPart->setColour(r,g,b);
 
+
         // if the model part has an actor set colour and visibility
         if (childPart->getActor())
         {
             childPart->getActor()->GetProperty()->SetColor(r / 255, g / 255, b / 255);
             childPart->getActor()->SetVisibility(vis);
+
+
+
         }
 
         // Recursivly run this function for any children of this model part
@@ -492,6 +530,10 @@ void MainWindow::updateRender() {
     }
     
 
+    // VRthread->issueCommand(4,0);
+    // QModelIndex index = ui->treeView->currentIndex();
+    // AddVRActors(index,VRthread);
+    // VRthread->issueCommand(5,0);
 }
 
 
