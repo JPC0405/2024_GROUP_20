@@ -57,17 +57,16 @@ VRRenderThread::~VRRenderThread() {
 void VRRenderThread::addActorOffline( vtkActor* actor ) {
 
 	/* Check to see if render thread is running */
-	if (!this->isRunning()) {
-		double* ac = actor->GetOrigin();
+    double* ac = actor->GetOrigin();
 	
 		/* I have found that these initial transforms will position the FS
 		 * car model in a sensible position but you can experiment
 		 */
-		actor->RotateX(-90);
-		actor->AddPosition(-ac[0]+0, -ac[1]-100, -ac[2]-200);
+    actor->RotateX(-90);
+    actor->AddPosition(-ac[0]+0, -ac[1]-100, -ac[2]-200);
 
-		actors->AddItem(actor);
-	}
+    actors->AddItem(actor);
+
 }
 
 
@@ -79,7 +78,7 @@ void VRRenderThread::issueCommand( int cmd, double value ) {
 		/* These are just a few basic examples */
 		case END_RENDER:
 			this->endRender = true;
-			break;
+            break;
 
 		case ROTATE_X:
 			this->rotateX = value;
@@ -92,6 +91,19 @@ void VRRenderThread::issueCommand( int cmd, double value ) {
 		case ROTATE_Z:
 			this->rotateZ = value;
 			break;
+
+
+        case REMOVE_ACTORS:
+            actors->RemoveAllItems();
+
+        case RESET_RENDER:
+            renderer->RemoveAllViewProps();
+            vtkActor* a;
+            actors->InitTraversal();
+            while( (a = (vtkActor*)actors->GetNextActor() ) ) {
+                renderer->AddActor(a);
+            }
+
 	}
 }
 

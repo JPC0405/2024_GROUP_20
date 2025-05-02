@@ -125,7 +125,10 @@
   </action>
   <action name="actionItems_Options">
    <property name="text">
-    <string>Test</string>
+    <string>Edit Values</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit Values</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

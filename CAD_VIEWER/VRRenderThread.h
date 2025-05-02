@@ -42,7 +42,9 @@ public:
         END_RENDER,
         ROTATE_X,
         ROTATE_Y,
-        ROTATE_Z
+        ROTATE_Z,
+        REMOVE_ACTORS,
+        RESET_RENDER
     } Command;
 
 

@@ -212,7 +212,65 @@ void MainWindow::on_pushButton_2_clicked()
     }
 }
 
+void MainWindow::on_actionItems_Options_triggered()
+{
 
+    // Open dialog window
+    OptionDialog dialog(this);
+
+    // Access currently selected model part
+    QModelIndex index = ui->treeView->currentIndex();
+    ModelPart *selectedPart = static_cast<ModelPart*>(index.internalPointer());
+
+    // Get data from selected part
+    QString name = selectedPart->data(0).toString();
+    bool vis = selectedPart->data(1).toBool();
+    qint64 R = selectedPart->getColourR();
+    qint64 G = selectedPart->getColourG();
+    qint64 B = selectedPart->getColourB();
+
+    // Set accessed data in dialog box
+    dialog.setVisibility(vis);
+    dialog.set_name(name);
+    dialog.set_R(R);
+    dialog.set_G(G);
+    dialog.set_B(B);
+
+    // if the accept button is pressed
+    if (dialog.exec() == QDialog::Accepted){
+        emit statusUpdateMessage(QString("Dialog accepted"), 0);
+
+
+        // use get functions in dialog to get users choice
+        bool n_vis = dialog.getVisibility();
+        QString n_name = dialog.get_name();
+        double n_R = dialog.get_R();
+        double n_G = dialog.get_G();
+        double n_B = dialog.get_B();
+
+        // update the selected item
+        selectedPart->setVisible(n_vis);
+        selectedPart->setName(n_name);
+        selectedPart->setColour(n_R,n_G,n_B);
+
+        // if an actor for the model part exists
+        if (selectedPart->getActor()) {
+            // Set the colour and visibility
+            selectedPart->getActor()->GetProperty()->SetColor(n_R / 255, n_G / 255, n_B / 255);
+            selectedPart->getActor()->SetVisibility(n_vis);
+        }
+
+
+        //update child items
+        updateChildren(selectedPart, vis, n_R, n_G, n_B);
+
+    }
+
+    // if cancel button is clicked
+    else{
+        emit statusUpdateMessage(QString("Dialog rejected"),0);
+    }
+}
 
 void MainWindow::on_actionOpen_File_triggered()
 {
@@ -253,11 +311,7 @@ void MainWindow::on_actionOpen_File_triggered()
     }
 }
 
-void MainWindow::on_actionItems_Options_triggered()
-{
-    //emit statusUpdateMessage(QString("Test action selected"),0);
 
-}
 
 void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
 
@@ -323,7 +377,15 @@ void MainWindow::updateRender() {
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
 
+    VRthread->issueCommand(4,0);
+    QModelIndex index = ui->treeView->currentIndex();
+    AddVRActors(index,VRthread);
+    VRthread->issueCommand(5,0);
+
+
+
 }
+
 
 void MainWindow::AddVRActors(const QModelIndex& index,VRRenderThread* thread) {
 
