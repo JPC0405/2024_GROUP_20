@@ -23,6 +23,11 @@
 #include <vtkOpenVRCamera.h>
 #include <vtkActorCollection.h>
 #include <vtkCommand.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkCubeSource.h>
+#include <vtkTexture.h>
+#include <vtkJPEGReader.h>
+#include <vtkSkybox.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -51,6 +56,7 @@ private:
     vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
     VRRenderThread* VRthread;
+    vtkSmartPointer<vtkSkybox> skyboxActor;
 
 public slots:
     void handleButton();
