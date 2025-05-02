@@ -209,7 +209,11 @@ void VRRenderThread::run() {
 			/* Remember time now */
 			t_last = std::chrono::steady_clock::now();
 		}
+
+
 	}
+
+	window->Finalize();
 }
 
 

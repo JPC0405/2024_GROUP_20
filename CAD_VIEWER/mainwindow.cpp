@@ -98,6 +98,32 @@ MainWindow::MainWindow(QWidget *parent)
     }
     */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 }
 
 // Destructor
@@ -124,7 +150,7 @@ void MainWindow::handleButton(){
     if (VR_ON==0)
     {
         VR_ON=1;
-        VRRenderThread *VRthread = new VRRenderThread();
+        VRthread = new VRRenderThread();
         QModelIndex index = ui->treeView->currentIndex();
         AddVRActors(index,VRthread);
         VRthread->start();
@@ -141,10 +167,11 @@ void MainWindow::handleButton(){
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    if(VR_ON==1)
-    {
-        VRthread.~VRRenderThread();
-        VR_ON=0;
+   if(VR_ON==1)
+   {
+        VRthread->issueCommand(0, 0);
+        VR_ON = 0;
+        emit statusUpdateMessage(QString("VR Renderer closed"), 0);
     }
 
     else
