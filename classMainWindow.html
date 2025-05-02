@@ -144,9 +144,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>updateRender</b> ()</
 <tr class="memitem:a6b77a823210c660e9a2a7e693bae0e65" id="r_a6b77a823210c660e9a2a7e693bae0e65"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMainWindow.html#a6b77a823210c660e9a2a7e693bae0e65">UpdateRenderFromTree</a> (const QModelIndex &amp;index)</td></tr>
 <tr class="memdesc:a6b77a823210c660e9a2a7e693bae0e65"><td class="mdescLeft">&#160;</td><td class="mdescRight">UpdateRenderFromTree Updates the index in the tree.  <br /></td></tr>
 <tr class="separator:a6b77a823210c660e9a2a7e693bae0e65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2aeec95f4ce144734afc6b784b506332" id="r_a2aeec95f4ce144734afc6b784b506332"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMainWindow.html#a2aeec95f4ce144734afc6b784b506332">updateChildren</a> (<a class="el" href="classModelPart.html">ModelPart</a> *parent, bool vis, double r, double g, double b)</td></tr>
-<tr class="memdesc:a2aeec95f4ce144734afc6b784b506332"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateChildren Updates the values of the vis, r, g and b  <br /></td></tr>
-<tr class="separator:a2aeec95f4ce144734afc6b784b506332"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19dbd9f762f37eac8a003f8376f3cf01" id="r_a19dbd9f762f37eac8a003f8376f3cf01"><td class="memItemLeft" align="right" valign="top"><a id="a19dbd9f762f37eac8a003f8376f3cf01" name="a19dbd9f762f37eac8a003f8376f3cf01"></a>
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD void AddVRActors(const QModelIndex &amp;index);=======void updateChildren(<a class="el" href="classModelPart.html">ModelPart</a> *parent, bool vis, double r, double g, double b);private:Ui::MainWindow *ui;<a class="el" href="classModelPartList.html">ModelPartList</a> *partList;vtkSmartPointer&lt; vtkRenderer &gt; renderer;vtkSmartPointer&lt; vtkGenericOpenGLRenderWindow &gt; renderWindow;void AddVRActors(const QModelIndex &amp;index, <a class="el" href="classVRRenderThread.html">VRRenderThread</a> *thread);&gt; &gt; &gt; &gt; &gt; &gt; void&#160;</td><td class="memItemRight" valign="bottom"><b>updateChildren</b> (<a class="el" href="classModelPart.html">ModelPart</a> *parent, bool vis, double r, double g, double b)</td></tr>
+<tr class="separator:a19dbd9f762f37eac8a003f8376f3cf01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="classMainWindow.html" title="The MainWindow class intialises the main window and its components for the application and for it to ...">MainWindow</a> class intialises the main window and its components for the application and for it to work with VTK In the <a class="el" href="classMainWindow.html" title="The MainWindow class intialises the main window and its components for the application and for it to ...">MainWindow</a> class, it connects the components from the <a class="el" href="classModelPartList.html">ModelPartList</a> and the vtk renderer to the <a class="el" href="classMainWindow.html" title="The MainWindow class intialises the main window and its components for the application and for it to ...">MainWindow</a> for the user to be able to interact with the ui. The class allows for rendering and holding of values, the user to perform file actions and button interactions on the ui. </p>
@@ -292,64 +292,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>updateRender</b> ()</
   <table class="params">
     <tr><td class="paramname">message</td><td>the message emitted </td></tr>
     <tr><td class="paramname">timeout</td><td>how long the message stays there </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a2aeec95f4ce144734afc6b784b506332" name="a2aeec95f4ce144734afc6b784b506332"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2aeec95f4ce144734afc6b784b506332">&#9670;&#160;</a></span>updateChildren()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void MainWindow::updateChildren </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classModelPart.html">ModelPart</a> *&#160;</td>
-          <td class="paramname"><em>parent</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>vis</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>r</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>g</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>b</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>updateChildren Updates the values of the vis, r, g and b </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">parent</td><td>the item in the <a class="el" href="classModelPart.html">ModelPart</a> which contains the values of the children </td></tr>
-    <tr><td class="paramname">vis</td><td>the visibilty value of the item </td></tr>
-    <tr><td class="paramname">r</td><td>the red value of the colour of the item </td></tr>
-    <tr><td class="paramname">g</td><td>the green value of the colour of the item </td></tr>
-    <tr><td class="paramname">b</td><td>the blue value of the colour of the item </td></tr>
   </table>
   </dd>
 </dl>
