@@ -10,8 +10,25 @@
 #include <QMainWindow>
 #include "Modelpart.h"
 #include "ModelpartList.h"
+#include "VRRenderThread.h"
 #include <vtkRenderer.h>
 #include <vtkGenericOpenGLRenderWindow.h>
+
+/* Project headers */
+
+/* Qt headers */
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
+
+/* Vtk headers */
+#include <vtkActor.h>
+#include <vtkOpenVRRenderWindow.h>
+#include <vtkOpenVRRenderWindowInteractor.h>
+#include <vtkOpenVRRenderer.h>
+#include <vtkOpenVRCamera.h>
+#include <vtkActorCollection.h>
+#include <vtkCommand.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -46,6 +63,7 @@ public:
      * \param index the item number in the tree
      */
     void UpdateRenderFromTree(const QModelIndex& index);
+
     /*!
      * \brief updateChildren
      * Updates the values of the vis, r, g and b
@@ -64,6 +82,19 @@ private:
 
     vtkSmartPointer<vtkRenderer> renderer; /*!< Pointer to the vtk renderer>*/
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;/*!< Pointer to the vtk generic open GL renderer window >*/
+
+    void AddVRActors( const QModelIndex& index,VRRenderThread* thread);
+    void updateChildren(ModelPart* parent, bool vis, double r, double g, double b);
+
+private:
+    Ui::MainWindow *ui;
+    ModelPartList* partList;
+    bool VR_ON = 0;
+
+
+    vtkSmartPointer<vtkRenderer> renderer;
+    vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
+    VRRenderThread* VRthread;
 
 public slots:
     /*!
@@ -104,5 +135,11 @@ private slots:
      * Emits a message to the status bar that the action has been clicked
      */
     void on_actionItems_Options_triggered();
+    void on_pushButton_3_clicked();
 };
+
+
+
 #endif // MAINWINDOW_H
+
+

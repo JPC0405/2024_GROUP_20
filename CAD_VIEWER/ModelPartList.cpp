@@ -18,7 +18,7 @@ ModelPartList::ModelPartList( const QString& data, QObject* parent ) : QAbstract
     /* Have option to specify number of visible properties for each item in tree - the root item
      * acts as the column headers
      */
-    rootItem = new ModelPart( { tr("Part"), tr("Visible?"),tr("R"),tr("G"),tr("B") });
+    rootItem = new ModelPart( { tr("Part"), tr("Visible?"),tr("R"),tr("G"),tr("B"),tr("XCLIPMIN"),tr("XCLIPMAX"),tr("YCLIPMIN"),tr("YCLIPMAX"),tr("ZCLIPMIN"),tr("ZCLIPMAX"),tr("SIZE") });
 }
 
 

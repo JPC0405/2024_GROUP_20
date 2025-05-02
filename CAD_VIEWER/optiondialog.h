@@ -87,6 +87,20 @@ public:
      */
     unsigned char get_B();
 
+    void set_Clip(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
+    void setSize(float size);
+    float get_MinX();
+    float get_MaxX();
+
+    float get_MinY();
+    float get_MaxY();
+
+    float get_MinZ();
+    float get_MaxZ();
+
+    float getSize();
+
+
 private slots:
     /*!
      * \brief on_lineEdit_editingFinished
