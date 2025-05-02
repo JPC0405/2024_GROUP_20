@@ -54,7 +54,14 @@
       <item>
        <widget class="QPushButton" name="pushButton">
         <property name="text">
-         <string>Test Status</string>
+         <string>Open VR Renderer</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="text">
+         <string>Close VR Render</string>
         </property>
        </widget>
       </item>
@@ -118,7 +125,10 @@
   </action>
   <action name="actionItems_Options">
    <property name="text">
-    <string>Test</string>
+    <string>Edit Values</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit Values</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

@@ -200,7 +200,8 @@ void ModelPart::loadSTL( QString fileName ) {
     /* 3. Initialise the part's vtkActor and link to the mapper */
     actor = vtkNew<vtkActor>();
     actor->SetMapper(mapper);
-    actor->GetProperty()->SetColor(1, 0, 0.35);
+    actor->GetProperty()->SetColor(1., 0., 0.35);
+
 }
 vtkSmartPointer<vtkDataSetMapper> ModelPart::applyClip(){//new function for clipping
     vtkSmartPointer<vtkPlane> planeLeft = vtkSmartPointer<vtkPlane>::New ( ) ;//creates plane to hide parts of the model at coordinates x<getMinX()
@@ -305,30 +306,40 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
     return actor;
 }
 
-//vtkActor* ModelPart::getNewActor() {
+vtkActor* ModelPart::getNewActor() {
     /* This is a placeholder function that you will need to modify if you want to use it
-     * 
-     * The default mapper/actor combination can only be used to render the part in 
+     *
+     * The default mapper/actor combination can only be used to render the part in
      * the GUI, it CANNOT also be used to render the part in VR. This means you need
      * to create a second mapper/actor combination for use in VR - that is the role
      * of this function. */
-     
+
      
      /* 1. Create new mapper */
+
+    vtkNew<vtkPolyDataMapper> newMapper;
+    newMapper->SetInputConnection(file->GetOutputPort());
+
      
      /* 2. Create new actor and link to mapper */
+
+    vtkActor* newActor = vtkActor::New();
+    newActor->SetMapper(newMapper);
      
-     /* 3. Link the vtkProperties of the original actor to the new actor. This means 
+     /* 3. Link the vtkProperties of the original actor to the new actor. This means
       *    if you change properties of the original part (colour, position, etc), the
       *    changes will be reflected in the GUI AND VR rendering.
-      *    
+      *
       *    See the vtkActor documentation, particularly the GetProperty() and SetProperty()
       *    functions.
       */
     
 
+    newActor->SetProperty(this->getActor()->GetProperty());
+
+
     /* The new vtkActor pointer must be returned here */
-//    return nullptr;
+    return newActor;
     
-//}
+}
 

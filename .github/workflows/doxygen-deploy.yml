@@ -19,11 +19,11 @@ jobs:
       run: sudo apt-get install -y doxygen
   
     - name: Run doxygen
-      working-directory: ${{github.workspace}}/worksheet5
+      working-directory: ${{github.workspace}}
       run: doxygen
 
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@v4.2.5
       with:
         branch: gh-pages
-        folder: ${{github.workspace}}/worksheet5/html
+        folder: ${{github.workspace}}/html
