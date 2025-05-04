@@ -23,11 +23,6 @@
 #include <vtkOpenVRCamera.h>
 #include <vtkActorCollection.h>
 #include <vtkCommand.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkCubeSource.h>
-#include <vtkTexture.h>
-#include <vtkJPEGReader.h>
-#include <vtkSkybox.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -44,7 +39,7 @@ public:
     ~MainWindow();
     void updateRender();
     void UpdateRenderFromTree(const QModelIndex& index);
-    void AddVRActors( const QModelIndex& index,VRRenderThread* thread);
+    void AddVRActors( const QModelIndex& index);
     void updateChildren(ModelPart* parent, bool vis, double r, double g, double b);
 
 private:
@@ -56,7 +51,6 @@ private:
     vtkSmartPointer<vtkRenderer> renderer;
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
     VRRenderThread* VRthread;
-    vtkSmartPointer<vtkSkybox> skyboxActor;
 
 public slots:
     void handleButton();
