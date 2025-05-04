@@ -340,6 +340,8 @@ vtkActor* ModelPart::getNewActor() {
 
     /* The new vtkActor pointer must be returned here */
     return newActor;
+
+    //test
     
 }
 
