@@ -27,6 +27,13 @@
 #include <vtkSTLReader.h>
 #include <vtkColor.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkPlane.h>
+#include <vtkClipDataSet.h>
+#include <vtkClipPolyData.h>
+#include <vtkDataSetMapper.h>
+#include <vtkShrinkFilter.h>
+#include <vtkSmartPointer.h>
+#include <vtkActor.h>
 
 class ModelPart {
 public:
@@ -130,6 +137,8 @@ public:
       */
 
     vtkSmartPointer<vtkActor> getNewActor();
+    vtkSmartPointer<vtkDataSetMapper> applyClip();
+
 
 private:
     QList<ModelPart*>                           m_childItems;       /**< List (array) of child items */
@@ -151,6 +160,9 @@ private:
 
     vtkSmartPointer<vtkMapper>           newMapper;
     vtkSmartPointer<vtkActor>                    newActor;
+    float xMin;
+    float xMax;
+
 };  
 
 

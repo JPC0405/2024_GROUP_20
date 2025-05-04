@@ -122,6 +122,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+
+
+/*!
+ * \brief MainWindow::handleTreeClick
+ * Emits a message saying which part of the treeview was clicked
+ */
+
 void MainWindow::handleTreeClick(){
     //Select the part clicked in the tree view
     QModelIndex index = ui->treeView->currentIndex();
@@ -131,6 +139,17 @@ void MainWindow::handleTreeClick(){
     // Update the status bar with the name of the model part
     emit statusUpdateMessage(QString("The selected item is: ")+text,0);
 }
+
+
+/*!
+ * \brief MainWindow::on_actionOpen_File_triggered
+ * When the open file action is triggered, a message is emitted to the staus bar and dialog box is opened to choose a STL or txt file
+ * The STL file is given standard parameters and then is rendered
+ */
+/*!
+ * \brief MainWindow::handleButton
+ *  Emits a message that the button has been pressed to the status bar
+ */
 
 void MainWindow::handleButton(){
     QMessageBox msgBox;
@@ -152,7 +171,6 @@ void MainWindow::handleButton(){
         emit statusUpdateMessage(QString("VR Renderer already running"),0);
     }
 }
-
 
 
 void MainWindow::on_pushButton_3_clicked()
@@ -231,6 +249,12 @@ void MainWindow::on_pushButton_2_clicked()
     }
 }
 
+
+/*!
+ * \brief MainWindow::on_actionItems_Options_triggered
+ * A message is emitted to the status bar for which action is selected
+ */
+
 void MainWindow::on_actionItems_Options_triggered()
 {
 
@@ -282,17 +306,14 @@ void MainWindow::on_actionItems_Options_triggered()
 
         //update child items
         updateChildren(selectedPart, vis, n_R, n_G, n_B);
-
     }
-
     // if cancel button is clicked
     else{
         emit statusUpdateMessage(QString("Dialog rejected"),0);
     }
 }
 
-void MainWindow::on_actionOpen_File_triggered()
-{
+void MainWindow::on_actionOpen_File_triggered(){
     emit statusUpdateMessage(QString("Open File action triggered"),0);
 
     // Open a dialog box to select STL or text files
@@ -392,6 +413,7 @@ void MainWindow::on_actionOpen_File_triggered()
     }
 }
 
+}
 
 
 void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
@@ -486,8 +508,6 @@ void MainWindow::AddVRActors(const QModelIndex& index) {
         }
 
     }
-
-    
 
     // if no children exist for the passed item
     if (!partList->hasChildren(index) || (index.flags() & Qt::ItemNeverHasChildren))
