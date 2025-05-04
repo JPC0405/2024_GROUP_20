@@ -12,7 +12,11 @@
 #include <vtkActor.h>
 #include <vtkCamera.h>
 #include <vtkProperty.h>
-
+#include <vtkPNGReader.h>
+#include <vtkImageData.h>
+#include <vtkImageClip.h>
+#include <vtkSkybox.h>
+#include <vtkSmartPointer.h>
 
 //main window thing:
 MainWindow::MainWindow(QWidget *parent)
@@ -286,7 +290,7 @@ void MainWindow::on_actionOpen_File_triggered()
         this,
         tr("Open Files"),
         "C:\\",
-        tr("STL Files(*.stl);;Text Files(*.txt)"));
+        tr("STL Files(*.stl);;Text Files(*.txt);;PNG Files(*.png)"));
 
     //emit statusUpdateMessage(QString(fileName),0);
 
@@ -342,7 +346,7 @@ void MainWindow::on_actionOpen_File_triggered()
             texture->MipmapOn();
 
             // Create and configure skybox
-            skyboxActor = vtkSmartPointer<vtkSkybox>::New(); // Store in member variable
+            vtkSmartPointer <vtkSkybox>skyboxActor = vtkSmartPointer<vtkSkybox>::New(); // Store in member variable
             skyboxActor->SetTexture(texture);
             skyboxActor->SetProjection(vtkSkybox::Cube);
 
@@ -378,7 +382,7 @@ void MainWindow::on_actionOpen_File_triggered()
     }
 }
 
-
+}
 
 void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
 
