@@ -34,9 +34,9 @@
 #include <vtkShrinkFilter.h>
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
+
 class ModelPart {
 public:
-    void setMapper(vtkSmartPointer<vtkDataSetMapper> inputMapper);
     /** Constructor
      * @param data is a List (array) of strings for each property of this item (part name and visiblity in our case
      * @param parent is the parent of this item (one level up in tree)
@@ -106,20 +106,11 @@ public:
       * (0-255 RGB values as ints)
       */
     void setColour(const unsigned char R, const unsigned char G, const unsigned char B);
-    void setClip(float xmin, float xmax, float ymin,float ymax, float zmin, float zmax);
-    void setSize(float size);
 
     // Getters for the colours of the part
     unsigned char getColourR();
     unsigned char getColourG();
     unsigned char getColourB();
-    float getMinX();
-    float getMaxX();
-    float getMinY();
-    float getMaxY();
-    float getMinZ();
-    float getMaxZ();
-    float getSize();
 
     /** Set visible flag
       * @param isVisible sets visible/non-visible
@@ -144,9 +135,9 @@ public:
     /** Return new actor for use in VR
       * @return pointer to new actor
       */
+
     vtkSmartPointer<vtkActor> getNewActor();
     vtkSmartPointer<vtkDataSetMapper> applyClip();
-
 
 
 private:
@@ -166,6 +157,7 @@ private:
     vtkSmartPointer<vtkMapper>                  mapper;             /**< Mapper for rendering */
     vtkSmartPointer<vtkActor>                   actor;              /**< Actor for rendering */
     vtkColor3<unsigned char>                    colour;             /**< User defineable colour */
+
     vtkSmartPointer<vtkMapper>           newMapper;
     vtkSmartPointer<vtkActor>                    newActor;
     float xMin;
