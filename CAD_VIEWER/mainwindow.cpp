@@ -19,6 +19,7 @@
 #include <vtkActor.h>
 #include <vtkCamera.h>
 #include <vtkProperty.h>
+#include <vtkLight.h>
 
 /*!
  * \brief MainWindow::MainWindow
@@ -62,6 +63,19 @@ MainWindow::MainWindow(QWidget *parent)
     renderer->GetActiveCamera()->Azimuth(30);
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
+
+    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
+    light->SetLightTypeToSceneLight();
+    light->SetPosition(5, 5, 15);
+    light->SetPositional(true);
+    light->SetConeAngle(10);
+    light->SetFocalPoint(0, 0, 0);
+    light->SetDiffuseColor(1, 1, 1);
+    light->SetAmbientColor(1, 1, 1);
+    light->SetSpecularColor(1, 1, 1);
+    light->SetIntensity(0.5);
+
+    renderer->AddLight( light );
 
     // Connecting Slots and signals of UI elements
     connect( ui->pushButton, &QPushButton::released, this, &MainWindow::handleButton );
