@@ -20,7 +20,7 @@
 #include <vtkSkybox.h>
 #include <vtkImageClip.h>
 
-
+//main window thing:
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -356,14 +356,14 @@ void MainWindow::on_actionOpen_File_triggered()
     {
         QFileInfo fileInfo(fileNames[i]);
         QString fileExtension = fileInfo.suffix().toLower();
-        if (fileExtension == "png")
+        if (fileExtension == "png")//checks if the loaded file is a png (skybox)
         {
-            // Load the single cross-layout PNG
+            // Load the (single cross-layout) PNG
             vtkNew<vtkPNGReader> reader;
             reader->SetFileName(fileNames[i].toStdString().c_str());
             reader->Update();
 
-            // Verify dimensions
+            // Verify dimensions - makes sure the image is the right resolution
             int* extent = reader->GetOutput()->GetExtent();
             int width = extent[1] - extent[0] + 1;
             int height = extent[3] - extent[2] + 1;
@@ -376,7 +376,7 @@ void MainWindow::on_actionOpen_File_triggered()
             // Face size is 256x256 (1024/4 = 256, 768/3 = 256)
             int faceSize = 256;
 
-            // Define the six faces' extents in the cross layout
+            // Define the six faces' extents in the cross layout - "refolds" the faces on the skybox
             int faceExtents[6][4] = {
                 {512, 768, 256, 512},  // Right (Positive X)
                 {0, 256, 256, 512},    // Left (Negative X)
