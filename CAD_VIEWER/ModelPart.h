@@ -26,7 +26,6 @@
 #include <vtkActor.h>
 #include <vtkSTLReader.h>
 #include <vtkColor.h>
-#include <vtkPolyDataMapper.h>
 
 class ModelPart {
 public:
@@ -128,7 +127,7 @@ public:
     /** Return new actor for use in VR
       * @return pointer to new actor
       */
-    vtkSmartPointer<vtkActor> getNewActor();
+    vtkActor* getNewActor();
 
 private:
     QList<ModelPart*>                           m_childItems;       /**< List (array) of child items */
@@ -147,9 +146,6 @@ private:
     vtkSmartPointer<vtkMapper>                  mapper;             /**< Mapper for rendering */
     vtkSmartPointer<vtkActor>                   actor;              /**< Actor for rendering */
     vtkColor3<unsigned char>                    colour;             /**< User defineable colour */
-
-    vtkSmartPointer<vtkMapper>           newMapper;
-    vtkSmartPointer<vtkActor>                    newActor;
 };  
 
 
