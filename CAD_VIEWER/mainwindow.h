@@ -68,9 +68,9 @@ public:
      * \param index the item number in the tree
      */
     void UpdateRenderFromTree(const QModelIndex& index);
-<<<<<<< HEAD
+
     void AddVRActors( const QModelIndex& index);
-=======
+
 
     /*!
      * \brief updateChildren
@@ -92,17 +92,9 @@ private:
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;/*!< Pointer to the vtk generic open GL renderer window >*/
 
     void AddVRActors( const QModelIndex& index,VRRenderThread* thread);
->>>>>>> 450abb6eaa61a959702c8f10ca135d0c94c1bb97
-    void updateChildren(ModelPart* parent, bool vis, double r, double g, double b);
 
-private:
-    Ui::MainWindow *ui;
-    ModelPartList* partList;
+
     bool VR_ON = 0;
-
-
-    vtkSmartPointer<vtkRenderer> renderer;
-    vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
     VRRenderThread* VRthread;
     vtkSmartPointer<vtkSkybox> skyboxActor;
 
