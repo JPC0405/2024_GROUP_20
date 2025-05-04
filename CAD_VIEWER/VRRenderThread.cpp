@@ -56,6 +56,8 @@ VRRenderThread::~VRRenderThread() {
 
 void VRRenderThread::addActorOffline( vtkActor* actor ) {
 
+	if (!actor) return;
+
 	/* Check to see if render thread is running */
     double* ac = actor->GetOrigin();
 	
@@ -94,15 +96,11 @@ void VRRenderThread::issueCommand( int cmd, double value ) {
 
 
         case REMOVE_ACTORS:
-            actors->RemoveAllItems();
+			this->remove_actors = true;
 
         case RESET_RENDER:
-            renderer->RemoveAllViewProps();
-            vtkActor* a;
-            actors->InitTraversal();
-            while( (a = (vtkActor*)actors->GetNextActor() ) ) {
-                renderer->AddActor(a);
-            }
+			this->reset_render = true;
+
 
 	}
 }
@@ -133,7 +131,7 @@ void VRRenderThread::run() {
 	renderer->SetBackground(colors->GetColor3d("BkgColor").GetData());
 	
 	/* Loop through list of actors provided and add to scene */
-	vtkActor* a;
+	vtkActor* a=0;
 	actors->InitTraversal();
 	while( (a = (vtkActor*)actors->GetNextActor() ) ) {
 		renderer->AddActor(a);
@@ -205,6 +203,21 @@ void VRRenderThread::run() {
 			while ((a = (vtkActor*)actorList->GetNextActor())) {
 				a->RotateZ(rotateZ);
 			}
+
+			if (remove_actors == true) {
+				actors->RemoveAllItems();
+				remove_actors = false;
+			}
+
+			if (reset_render == true) {
+				vtkActor* a;
+				actors->InitTraversal();
+				while ((a = (vtkActor*)actors->GetNextActor())) {
+					renderer->AddActor(a);
+				}
+				reset_render = false;
+			}
+
 			
 			/* Remember time now */
 			t_last = std::chrono::steady_clock::now();

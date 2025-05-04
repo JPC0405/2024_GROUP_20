@@ -95,6 +95,8 @@ private:
       * by the GUI then the rendering will end 
       */
     bool                                                endRender;
+    bool remove_actors = false;
+    bool reset_render = false;
 
     /* Some variables to indicate animation actions to apply.
      *
