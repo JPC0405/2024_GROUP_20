@@ -14,7 +14,7 @@
 #include <vtkProperty.h>
 
 
-
+//main window thing:
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -293,6 +293,68 @@ void MainWindow::on_actionOpen_File_triggered()
     // for all items selected in the file directory
     for (int i=0;i<fileNames.size();i++)
     {
+        QFileInfo fileInfo(fileNames[i]);
+        QString fileExtension = fileInfo.suffix().toLower();
+        if (fileExtension == "png")//checks if the loaded file is a png (skybox)
+        {
+            // Load the (single cross-layout) PNG
+            vtkNew<vtkPNGReader> reader;
+            reader->SetFileName(fileNames[i].toStdString().c_str());
+            reader->Update();
+
+            // Verify dimensions - makes sure the image is the right resolution
+            int* extent = reader->GetOutput()->GetExtent();
+            int width = extent[1] - extent[0] + 1;
+            int height = extent[3] - extent[2] + 1;
+            if (width != 1024 || height != 768)
+            {
+                emit statusUpdateMessage(QString("Error: PNG must be 1024x768 for 4x3 cross layout"), 0);
+                continue;
+            }
+
+            // Face size is 256x256 (1024/4 = 256, 768/3 = 256)
+            int faceSize = 256;
+
+            // Define the six faces' extents in the cross layout - "refolds" the faces on the skybox
+            int faceExtents[6][4] = {
+                {512, 768, 256, 512},  // Right (Positive X)
+                {0, 256, 256, 512},    // Left (Negative X)
+                {256, 512, 0, 256},    // Top (Positive Y)
+                {256, 512, 512, 768},  // Bottom (Negative Y)
+                {256, 512, 256, 512},  // Front (Positive Z)
+                {768, 1024, 256, 512}  // Back (Negative Z)
+            };
+
+            // Create cubemap texture
+            vtkNew<vtkTexture> texture;
+            texture->CubeMapOn();
+            for (int j = 0; j < 6; j++)
+            {
+                vtkNew<vtkImageClip> clip;
+                clip->SetInputConnection(reader->GetOutputPort());
+                clip->SetOutputWholeExtent(faceExtents[j][0], faceExtents[j][1] - 1, faceExtents[j][2], faceExtents[j][3] - 1, 0, 0);
+                clip->ClipDataOn();
+                clip->Update();
+
+                texture->SetInputConnection(j, clip->GetOutputPort());
+            }
+            texture->InterpolateOn();
+            texture->MipmapOn();
+
+            // Create and configure skybox
+            skyboxActor = vtkSmartPointer<vtkSkybox>::New(); // Store in member variable
+            skyboxActor->SetTexture(texture);
+            skyboxActor->SetProjection(vtkSkybox::Cube);
+
+            // Add skybox to renderer
+            renderer->AddActor(skyboxActor);
+            renderer->SetBackground(0.0, 0.0, 0.0);
+            renderer->GetActiveCamera()->SetClippingRange(1.0, 10000.0);
+            renderer->ResetCameraClippingRange();
+
+            emit statusUpdateMessage(QString("Skybox added using cross-layout PNG: ") + fileNames[i], 0);
+        }
+        else{
         // Create a new model part item with default perameters and append it to the tree
         QString visible("true");
         qint64 R(255);
