@@ -156,7 +156,7 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
     return actor;
 }
 
-vtkActor* ModelPart::getNewActor() {
+vtkSmartPointer<vtkActor> ModelPart::getNewActor() {
     /* This is a placeholder function that you will need to modify if you want to use it
      *
      * The default mapper/actor combination can only be used to render the part in

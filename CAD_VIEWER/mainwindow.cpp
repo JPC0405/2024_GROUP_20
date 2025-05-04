@@ -98,32 +98,8 @@ MainWindow::MainWindow(QWidget *parent)
     }
     */
 
+    VRthread = NULL;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
 }
 
 // Destructor
@@ -152,7 +128,7 @@ void MainWindow::handleButton(){
         VR_ON=1;
         VRthread = new VRRenderThread();
         QModelIndex index = ui->treeView->currentIndex();
-        AddVRActors(index,VRthread);
+        AddVRActors(index);
         VRthread->start();
         emit statusUpdateMessage(QString("VR Renderer Started"),0);
     }
@@ -188,6 +164,8 @@ void MainWindow::on_pushButton_2_clicked()
     // Access currently selected model part
     QModelIndex index = ui->treeView->currentIndex();
     ModelPart *selectedPart = static_cast<ModelPart*>(index.internalPointer());
+
+    if (!selectedPart) return;
 
     // Get data from selected part
     QString name = selectedPart->data(0).toString();
@@ -404,17 +382,22 @@ void MainWindow::updateRender() {
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
 
-    VRthread->issueCommand(4,0);
-    QModelIndex index = ui->treeView->currentIndex();
-    AddVRActors(index,VRthread);
-    VRthread->issueCommand(5,0);
-
-
+    
+    if (VR_ON == 1)
+    {
+        if (VRthread) {
+            //VRthread->issueCommand(4, 0);
+            QModelIndex index = ui->treeView->currentIndex();
+            AddVRActors(index);
+            //VRthread->issueCommand(5, 0);
+        }
+    }
+    
 
 }
 
 
-void MainWindow::AddVRActors(const QModelIndex& index,VRRenderThread* thread) {
+void MainWindow::AddVRActors(const QModelIndex& index) {
 
     //if a a valid index is passed
     if (index.isValid()) {
@@ -423,10 +406,12 @@ void MainWindow::AddVRActors(const QModelIndex& index,VRRenderThread* thread) {
 
         if(selectedPart->getActor())
         {
-            thread->addActorOffline(selectedPart->getNewActor());
+            VRthread->addActorOffline(selectedPart->getNewActor());
         }
 
     }
+
+    
 
     // if no children exist for the passed item
     if (!partList->hasChildren(index) || (index.flags() & Qt::ItemNeverHasChildren))
@@ -441,7 +426,7 @@ void MainWindow::AddVRActors(const QModelIndex& index,VRRenderThread* thread) {
         // for each item in the tree recursively run this function
         for (int i = 0; i < rows; i++)
         {
-            AddVRActors(partList->index(i, 0, index),thread);
+            AddVRActors(partList->index(i, 0, index));
         }
     }
 }

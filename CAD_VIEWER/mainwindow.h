@@ -39,7 +39,7 @@ public:
     ~MainWindow();
     void updateRender();
     void UpdateRenderFromTree(const QModelIndex& index);
-    void AddVRActors( const QModelIndex& index,VRRenderThread* thread);
+    void AddVRActors( const QModelIndex& index);
     void updateChildren(ModelPart* parent, bool vis, double r, double g, double b);
 
 private:
