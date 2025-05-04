@@ -63,13 +63,6 @@ private:
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;/*!< Pointer to the vtk generic open GL renderer window >*/
 
 
-    void AddVRActors( const QModelIndex& index);
-    void updateChildren(ModelPart* parent, bool vis, double r, double g, double b);
-
-    bool VR_ON = 0;
-
-
-
     bool VR_ON = 0;
     VRRenderThread* VRthread;
 

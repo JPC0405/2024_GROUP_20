@@ -39,7 +39,6 @@
 class ModelPart {
 public:
     void setMapper(vtkSmartPointer<vtkDataSetMapper> inputMapper);
-void setMapper(vtkSmartPointer<vtkDataSetMapper> inputMapper);
     /** Constructor
      * @param data is a List (array) of strings for each property of this item (part name and visiblity in our case
      * @param parent is the parent of this item (one level up in tree)
@@ -124,13 +123,6 @@ void setMapper(vtkSmartPointer<vtkDataSetMapper> inputMapper);
     float getMaxZ();
     float getSize();
 
-    float getMinX();
-    float getMaxX();
-    float getMinY();
-    float getMaxY();
-    float getMinZ();
-    float getMaxZ();
-    float getSize();
 
 
 

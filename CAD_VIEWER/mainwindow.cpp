@@ -13,6 +13,15 @@
 #include <vtkCamera.h>
 #include <vtkProperty.h>
 #include <vtkLight.h>
+#include <vtkImageClip.h>
+#include <vtkpngreader.h>
+#include <vtkImageAlgorithm.h>
+#include <vtkImageData.h>
+#include <vtkSkybox.h>
+
+
+
+
 
 
 //main window thing:
@@ -51,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
 
+    /*
     vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
     light->SetLightTypeToSceneLight();
     light->SetPosition(5, 5, 15);
@@ -63,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
     light->SetIntensity(0.5);
 
     renderer->AddLight( light );
+*/
 
     // Connecting Slots and signals of UI elements
     connect( ui->pushButton, &QPushButton::released, this, &MainWindow::handleButton );
@@ -187,8 +198,10 @@ void MainWindow::on_pushButton_3_clicked()
     }
 }
 
+
 void MainWindow::on_pushButton_2_clicked()
 {
+    /*
     // Open dialog window
     OptionDialog dialog(this);
 
@@ -280,6 +293,7 @@ void MainWindow::on_pushButton_2_clicked()
     else{
         emit statusUpdateMessage(QString("Dialog rejected"),0);
     }
+*/
 }
 
 
@@ -290,7 +304,6 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_actionItems_Options_triggered()
 {
-
     // Open dialog window
     OptionDialog dialog(this);
 
@@ -298,19 +311,36 @@ void MainWindow::on_actionItems_Options_triggered()
     QModelIndex index = ui->treeView->currentIndex();
     ModelPart *selectedPart = static_cast<ModelPart*>(index.internalPointer());
 
+    if (!selectedPart) return;
+
     // Get data from selected part
+    // Get data from selected part
+    qDebug()<<"getting data from selected part";
     QString name = selectedPart->data(0).toString();
     bool vis = selectedPart->data(1).toBool();
     qint64 R = selectedPart->getColourR();
     qint64 G = selectedPart->getColourG();
     qint64 B = selectedPart->getColourB();
+    float xmin = selectedPart->getMinX();
+    float xmax = selectedPart->getMaxX();
+    float ymin = selectedPart->getMinY();
+    float ymax = selectedPart->getMaxY();
+    float zmin = selectedPart->getMinZ();
+    float zmax = selectedPart->getMaxZ();
+    float size = selectedPart->getSize();
+    qDebug()<<"got data from selected part";
 
     // Set accessed data in dialog box
+    qDebug()<<"setting data in dialog box";
     dialog.setVisibility(vis);
     dialog.set_name(name);
     dialog.set_R(R);
     dialog.set_G(G);
     dialog.set_B(B);
+    dialog.set_Clip(xmin, xmax, ymin, ymax, zmin, zmax);
+    dialog.setSize(size);
+    qDebug()<<"3 Set size: "<<size;
+    qDebug()<<"set data in dialog box";
 
     // if the accept button is pressed
     if (dialog.exec() == QDialog::Accepted){
@@ -318,16 +348,34 @@ void MainWindow::on_actionItems_Options_triggered()
 
 
         // use get functions in dialog to get users choice
+        qDebug()<<"getting user choice";
         bool n_vis = dialog.getVisibility();
         QString n_name = dialog.get_name();
         double n_R = dialog.get_R();
         double n_G = dialog.get_G();
         double n_B = dialog.get_B();
+        float minX = dialog.get_MinX();
+        float maxX = dialog.get_MaxX();
+        float minY = dialog.get_MinY();
+        float maxY = dialog.get_MaxY();
+        float minZ = dialog.get_MinZ();
+        float maxZ = dialog.get_MaxZ();
+        float sizeF = dialog.getSize();
+        qDebug()<<"4 got size: "<<sizeF;
+        qDebug()<<"got user choice";
 
         // update the selected item
+        qDebug()<<"updating selected item";
         selectedPart->setVisible(n_vis);
         selectedPart->setName(n_name);
         selectedPart->setColour(n_R,n_G,n_B);
+        selectedPart->setClip(minX,maxX,minY,maxY,minZ,maxZ);
+        selectedPart->setSize(sizeF);
+        selectedPart->setMapper(selectedPart->applyClip());
+
+        qDebug()<<"5 set size: "<<sizeF;
+        qDebug()<<"updated selected item";
+
 
         // if an actor for the model part exists
         if (selectedPart->getActor()) {
@@ -339,7 +387,10 @@ void MainWindow::on_actionItems_Options_triggered()
 
         //update child items
         updateChildren(selectedPart, vis, n_R, n_G, n_B);
+
+
     }
+
     // if cancel button is clicked
     else{
         emit statusUpdateMessage(QString("Dialog rejected"),0);
@@ -354,7 +405,7 @@ void MainWindow::on_actionOpen_File_triggered(){
         this,
         tr("Open Files"),
         "C:\\",
-        tr("STL Files(*.stl);;Text Files(*.txt)"));
+        tr("STL Files(*.stl);;Text Files(*.txt);;PNG Files(*.png)"));
 
     //emit statusUpdateMessage(QString(fileName),0);
 
@@ -410,7 +461,7 @@ void MainWindow::on_actionOpen_File_triggered(){
             texture->MipmapOn();
 
             // Create and configure skybox
-            skyboxActor = vtkSmartPointer<vtkSkybox>::New(); // Store in member variable
+            vtkSmartPointer<vtkSkybox> skyboxActor = vtkSmartPointer<vtkSkybox>::New(); // Store in member variable
             skyboxActor->SetTexture(texture);
             skyboxActor->SetProjection(vtkSkybox::Cube);
 
@@ -422,6 +473,9 @@ void MainWindow::on_actionOpen_File_triggered(){
 
             emit statusUpdateMessage(QString("Skybox added using cross-layout PNG: ") + fileNames[i], 0);
         }
+
+
+
         else{
         // Create a new model part item with default perameters and append it to the tree
         QString visible("true");
@@ -494,9 +548,6 @@ void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g,
         {
             childPart->getActor()->GetProperty()->SetColor(r / 255, g / 255, b / 255);
             childPart->getActor()->SetVisibility(vis);
-
-
-
         }
 
         // Recursivly run this function for any children of this model part
