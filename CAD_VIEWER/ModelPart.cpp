@@ -150,8 +150,13 @@ float ModelPart::getSize(){
     return m_itemData.at(11).toFloat();
 }
 
-void ModelPart::setMapper(vtkSmartPointer<vtkDataSetMapper> inputMapper){
+void ModelPart::setMapper(vtkSmartPointer<vtkDataSetMapper> inputMapper) {
     mapper = inputMapper;
+}
+
+void ModelPart::setSize(float size){
+    m_itemData.replace(11,size);
+    qDebug()<<"7 set size: "<<size;
 }
 
 void ModelPart::setSize(float size){
@@ -196,11 +201,96 @@ void ModelPart::loadSTL( QString fileName ) {
     mapper = applyClip();
 
 
-
     /* 3. Initialise the part's vtkActor and link to the mapper */
     actor = vtkNew<vtkActor>();
     actor->SetMapper(mapper);
     actor->GetProperty()->SetColor(1., 0., 0.35);
+
+}
+
+vtkSmartPointer<vtkDataSetMapper> ModelPart::applyClip(){//new function for clipping
+    vtkSmartPointer<vtkPlane> planeLeft = vtkSmartPointer<vtkPlane>::New ( ) ;//creates plane to hide parts of the model at coordinates x<getMinX()
+    vtkSmartPointer<vtkPolyData> inputPolyData = file->GetOutput();//gets the model
+    double bounds[6];//creates array
+    inputPolyData->GetBounds(bounds);//stores the bounds in the array - [lowest x coord, highest x coord, lowest y coord, highest y coord, lowest z coord, highest z coord]
+
+    qDebug()<<"Min X="<<getMinX();
+    //SetOrigin(X,Y,Z)
+    float lowerX = bounds[0] + (getMinX() / 100.0) * (bounds[1] - bounds[0]);//uses the result from getMinX() as the proportion of the model to be cut off - e.g. if getMinX() returns 20, the first 20% of the model will be clipped
+    planeLeft->SetOrigin( lowerX, 0.0, 0.0 );//sets the origin of the plane (the first X coordinate to be shown in the display)
+    planeLeft->SetNormal ( 1.0, 0.0, 0.0 ) ;//sets the direction of the plane to the positive X direction, so x coordinates higher than the given are showed
+
+    vtkSmartPointer<vtkClipPolyData> clipFilterL = vtkSmartPointer<vtkClipPolyData >::New ( ) ;
+    clipFilterL->SetInputConnection ( file->GetOutputPort ( ) ) ;
+    clipFilterL->SetClipFunction( planeLeft.Get( ) ) ;//these lines are for creating the actual model that has been clipped
+
+    // Set up the second clipping plane - code is the same as above but for different clips
+    vtkSmartPointer<vtkPlane> planeRight = vtkSmartPointer<vtkPlane>::New();
+    qDebug()<<"Max X="<<getMaxX();
+    float upperX = bounds[0] + (getMaxX() / 100.0) * (bounds[1] - bounds[0]);
+    planeRight->SetOrigin(upperX, 0.0, 0.0);
+    planeRight->SetNormal(-1.0, 0.0, 0.0); // Normal points along -x (keeps left side)
+
+    vtkSmartPointer<vtkClipPolyData> clipFilterR = vtkSmartPointer<vtkClipPolyData>::New();
+    clipFilterR->SetInputConnection(clipFilterL->GetOutputPort());
+    clipFilterR->SetClipFunction(planeRight.Get());
+
+    // Set up the third clipping plane
+    vtkSmartPointer<vtkPlane> planeLowerY = vtkSmartPointer<vtkPlane>::New();
+    qDebug()<<"Min Y="<<getMinY();
+    float lowerY = bounds[2] + (getMinY() / 100.0) * (bounds[3] - bounds[2]);
+    planeLowerY->SetOrigin(0, lowerY, 0.0);
+    planeLowerY->SetNormal(0., 1.0, 0.0); // Normal points along y
+
+    vtkSmartPointer<vtkClipPolyData> clipFilterLowY = vtkSmartPointer<vtkClipPolyData>::New();
+    clipFilterLowY->SetInputConnection(clipFilterR->GetOutputPort());
+    clipFilterLowY->SetClipFunction(planeLowerY.Get());
+
+    // Set up the fourth clipping plane
+    vtkSmartPointer<vtkPlane> planeUpperY = vtkSmartPointer<vtkPlane>::New();
+    qDebug()<<"Max Y="<<getMaxY();
+    float upperY = bounds[2] + (getMaxY() / 100.0) * (bounds[3] - bounds[2]);
+    planeUpperY->SetOrigin(0, upperY, 0.0);
+    planeUpperY->SetNormal(0, -1.0, 0.0); // Normal points along -y
+
+    vtkSmartPointer<vtkClipPolyData> clipFilterUpY = vtkSmartPointer<vtkClipPolyData>::New();
+    clipFilterUpY->SetInputConnection(clipFilterLowY->GetOutputPort());
+    clipFilterUpY->SetClipFunction(planeUpperY.Get());
+
+    // Set up the fifth clipping plane
+    vtkSmartPointer<vtkPlane> planeLowerZ = vtkSmartPointer<vtkPlane>::New();
+    qDebug()<<"Min Z="<<getMinZ();
+    float lowerZ = bounds[4] + (getMinZ() / 100.0) * (bounds[5] - bounds[4]);
+    planeLowerZ->SetOrigin(0., 0., lowerZ);
+    planeLowerZ->SetNormal(0., 0., 1); // Normal points along z
+
+    vtkSmartPointer<vtkClipPolyData> clipFilterLowZ = vtkSmartPointer<vtkClipPolyData>::New();
+    clipFilterLowZ->SetInputConnection(clipFilterUpY->GetOutputPort());
+    clipFilterLowZ->SetClipFunction(planeLowerZ.Get());
+
+    // Set up the sixth clipping plane
+    vtkSmartPointer<vtkPlane> planeUpperZ = vtkSmartPointer<vtkPlane>::New();
+    qDebug()<<"Max Z="<<getMaxZ();
+    float upperZ = bounds[4] + (getMaxZ() / 100.0) * (bounds[5] - bounds[4]);
+    planeUpperZ->SetOrigin(0, 0., upperZ);
+    planeUpperZ->SetNormal(0, 0., -1); // Normal points along -z
+
+    vtkSmartPointer<vtkClipPolyData> clipFilterUpZ = vtkSmartPointer<vtkClipPolyData>::New();
+    clipFilterUpZ->SetInputConnection(clipFilterLowZ->GetOutputPort());
+    clipFilterUpZ->SetClipFunction(planeUpperZ.Get());
+
+    vtkSmartPointer<vtkShrinkFilter>shrinkFilter = vtkSmartPointer<vtkShrinkFilter>::New();
+    shrinkFilter->SetInputConnection(clipFilterUpZ->GetOutputPort( ));
+    shrinkFilter->SetShrinkFactor(getSize()/100) ;
+    qDebug()<<"Size: "<<getSize()<<"%";
+    // shrinkFilter->Update();
+
+    vtkSmartPointer<vtkDataSetMapper> newMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+    //mapper->SetInputConnection(file->GetOutputPort());
+    newMapper->SetInputConnection(shrinkFilter->GetOutputPort( ));
+
+    return newMapper;
+}
 
 }
 vtkSmartPointer<vtkDataSetMapper> ModelPart::applyClip(){//new function for clipping
