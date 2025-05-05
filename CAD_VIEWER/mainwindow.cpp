@@ -18,11 +18,8 @@
 #include <vtkImageAlgorithm.h>
 #include <vtkImageData.h>
 #include <vtkSkybox.h>
+#include <vtkSmartPointer.h>
 #include <QStandardItemModel>
-
-
-
-
 
 
 //main window thing:
@@ -39,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow->AddRenderer(renderer);
 
-    
+
     // Render Initial cylinder in render window
     vtkNew<vtkCylinderSource> cylinder;
     cylinder->SetResolution(8);
@@ -54,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     cylinderActor->RotateY(-45.0);
 
     renderer->AddActor(cylinderActor);
-    
+
     // Modify camera to focus render
     renderer->ResetCamera();
     renderer->GetActiveCamera()->Azimuth(30);
@@ -81,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect( ui->treeView, &QTreeView::clicked, this, &MainWindow::handleTreeClick );
     connect(this, &MainWindow::statusUpdateMessage,ui->statusbar, &QStatusBar::showMessage);
 
-    // Instatiate a tree view with a part list 
+    // Instatiate a tree view with a part list
     this->partList = new ModelPartList("PartsList");
     ui->treeView->setModel(this->partList);
     ModelPart *rootItem = this->partList->getRootItem();
@@ -187,8 +184,8 @@ void MainWindow::handleButton(){
 
 void MainWindow::on_pushButton_3_clicked()
 {
-   if(VR_ON==1)
-   {
+    if(VR_ON==1)
+    {
         VRthread->issueCommand(0, 0);
         VR_ON = 0;
         emit statusUpdateMessage(QString("VR Renderer closed"), 0);
@@ -222,6 +219,9 @@ void MainWindow::on_pushButton_2_clicked()
         }
 
         updateRender();
+
+        //update child items
+        updateChildren(selectedPart, vis, n_R, n_G, n_B, minX, maxX, minY, maxY, minZ, maxZ, sizeF);
 
     }
 
@@ -282,7 +282,7 @@ void MainWindow::on_actionItems_Options_triggered()
     if (dialog.exec() == QDialog::Accepted){
         emit statusUpdateMessage(QString("Dialog accepted"), 0);
 
-        
+
         // use get functions in dialog to get users choice
         qDebug()<<"getting user choice";
         bool n_vis = dialog.getVisibility();
@@ -299,7 +299,7 @@ void MainWindow::on_actionItems_Options_triggered()
         float sizeF = dialog.getSize();
         qDebug()<<"4 got size: "<<sizeF;
         qDebug()<<"got user choice";
-        
+
 
         // update the selected item
         qDebug()<<"updating selected item";
@@ -308,10 +308,13 @@ void MainWindow::on_actionItems_Options_triggered()
         selectedPart->setColour(n_R,n_G,n_B);
         selectedPart->setClip(minX,maxX,minY,maxY,minZ,maxZ);
         selectedPart->setSize(sizeF);
-        
+
         if (selectedPart->empty_node==false)
         {
             selectedPart->setMapper(selectedPart->applyClip());
+            selectedPart->getMapper()->Update();
+            selectedPart->getMapper()->Modified();
+            selectedPart->getActor()->Modified();
         }
 
         qDebug()<<"5 set size: "<<sizeF;
@@ -323,11 +326,12 @@ void MainWindow::on_actionItems_Options_triggered()
             // Set the colour and visibility
             selectedPart->getActor()->GetProperty()->SetColor(n_R / 255, n_G / 255, n_B / 255);
             selectedPart->getActor()->SetVisibility(n_vis);
+            qDebug()<<"Set colour and visibility";
         }
 
 
         //update child items
-        updateChildren(selectedPart, vis, n_R, n_G, n_B);
+        updateChildren(selectedPart, vis, n_R, n_G, n_B, minX, maxX, minY, maxY, minZ, maxZ, sizeF);
 
 
     }
@@ -402,7 +406,7 @@ void MainWindow::on_actionOpen_File_triggered(){
             texture->MipmapOn();
 
             // Create and configure skybox
-            vtkSmartPointer<vtkSkybox> skyboxActor = vtkSmartPointer<vtkSkybox>::New(); // Store in member variable
+            vtkSmartPointer <vtkSkybox>skyboxActor = vtkSmartPointer<vtkSkybox>::New(); // Store in member variable
             skyboxActor->SetTexture(texture);
             skyboxActor->SetProjection(vtkSkybox::Cube);
 
@@ -418,31 +422,29 @@ void MainWindow::on_actionOpen_File_triggered(){
 
 
         else{
-        // Create a new model part item with default perameters and append it to the tree
-        QString visible("true");
-        qint64 R(255);
-        qint64 G(0);
-        qint64 B(90);
+            // Create a new model part item with default perameters and append it to the tree
+            QString visible("true");
+            qint64 R(255);
+            qint64 G(0);
+            qint64 B(90);
 
-        ModelPart* childItem = new ModelPart({ fileNames[i].section('/', -1),visible,R,G,B, 0.,100.,0.,100.,0.,100.,100});
-        QModelIndex index = ui->treeView->currentIndex();
-        ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-        selectedPart->appendChild(childItem);
+            ModelPart* childItem = new ModelPart({ fileNames[i].section('/', -1),visible,R,G,B, 0.,100.,0.,100.,0.,100.,100});
+            QModelIndex index = ui->treeView->currentIndex();
+            ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
+            selectedPart->appendChild(childItem);
 
-        // Load the selected STL file and update status bar
-        childItem->loadSTL(fileNames[i]);
-        emit statusUpdateMessage(QString("Loaded STL File"+QString(fileNames[i])), 0);
+            // Load the selected STL file and update status bar
+            childItem->loadSTL(fileNames[i]);
+            emit statusUpdateMessage(QString("Loaded STL File"+QString(fileNames[i])), 0);
 
-        // Add the loaded STL file to the renderer
-        renderer->AddActor(childItem->getActor());
+            // Add the loaded STL file to the renderer
+            renderer->AddActor(childItem->getActor());
 
-        // Update the render to show new model
-        updateRender();
+            // Update the render to show new model
+            updateRender();
+        }
     }
 }
-
-}
-
 
 void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
 
@@ -450,12 +452,12 @@ void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
     if (index.isValid()) {
         // Add the actor for the selected part to the renderer
         ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-        
+
         if (selectedPart->getActor())
         {
             renderer->AddActor(selectedPart->getActor());
         }
-        
+
     }
 
     // if no children exist for the passed item
@@ -477,7 +479,7 @@ void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
 }
 
 
-void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g, double b)
+void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g, double b, float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, float size)
 {
     // for the number of children of the passed item
     for (int i = 0; i < parent->childCount(); i++)
@@ -486,6 +488,8 @@ void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g,
         ModelPart* childPart = parent->child(i);
         childPart->setVisible(vis);
         childPart->setColour(r,g,b);
+        childPart->setClip(xmin, xmax, ymin, ymax, zmin, zmax);
+        childPart->setSize(size);
 
 
         // if the model part has an actor set colour and visibility
@@ -493,13 +497,23 @@ void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g,
         {
             childPart->getActor()->GetProperty()->SetColor(r / 255, g / 255, b / 255);
             childPart->getActor()->SetVisibility(vis);
+            // Update size (scale) and clipping if not an empty node
+            if (childPart->empty_node == false)
+            {
+                // Set the actor's scale to reflect the size
+                childPart->getActor()->SetScale(size/100);
+                // Reapply clipping filter and update the mapper
+                childPart->setMapper(childPart->applyClip());
+                childPart->getMapper()->Update();
+                childPart->getMapper()->Modified();
+                childPart->getActor()->Modified();
+            }
         }
 
         // Recursivly run this function for any children of this model part
-        updateChildren(childPart, vis, r, g, b);
+        updateChildren(childPart, vis, r, g, b, xmin, xmax, ymin, ymax, zmin, zmax, size);
     }
 }
-
 void MainWindow::updateRender() {
     // Remove all actors from render window
     renderer->RemoveAllViewProps();
@@ -514,7 +528,7 @@ void MainWindow::updateRender() {
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
 
-    
+
     if (VR_ON == 1)
     {
         if (VRthread) {
@@ -524,7 +538,7 @@ void MainWindow::updateRender() {
             //VRthread->issueCommand(5, 0);
         }
     }
-    
+
 
     // VRthread->issueCommand(4,0);
     // QModelIndex index = ui->treeView->currentIndex();
@@ -564,8 +578,3 @@ void MainWindow::AddVRActors(const QModelIndex& index) {
         }
     }
 }
-
-
-
-
-

@@ -164,6 +164,7 @@ void ModelPart::setMapper(vtkSmartPointer<vtkDataSetMapper> inputMapper) {
     {
         mapper = inputMapper;
     }
+    mapper->Update();
 }
 
 vtkSmartPointer<vtkMapper> ModelPart::getMapper() {
@@ -372,5 +373,6 @@ vtkSmartPointer<vtkActor> ModelPart::getNewActor() {
 
     //test
     
+    // Test
 }
 

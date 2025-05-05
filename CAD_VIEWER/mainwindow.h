@@ -23,6 +23,8 @@
 #include <vtkOpenVRCamera.h>
 #include <vtkActorCollection.h>
 #include <vtkCommand.h>
+#include <vtkSkybox.h>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -52,18 +54,16 @@ public:
      * \param g the green value of the colour of the item
      * \param b the blue value of the colour of the item
      */
-    void updateChildren(ModelPart* parent, bool vis, double r, double g, double b);
+    void updateChildren(ModelPart* parent, bool vis, double r, double g, double b, float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, float size);
 
 private:
 
     Ui::MainWindow *ui; /*!< Pointer to the ui>*/
     ModelPartList* partList; /*!< Pointer to the ModelPartList file>*/
-
     vtkSmartPointer<vtkRenderer> renderer; /*!< Pointer to the vtk renderer>*/
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;/*!< Pointer to the vtk generic open GL renderer window >*/
-
-
     bool VR_ON = 0;
+    vtkSmartPointer<vtkSkybox> skyboxActor;
     VRRenderThread* VRthread;
 
 public slots:
