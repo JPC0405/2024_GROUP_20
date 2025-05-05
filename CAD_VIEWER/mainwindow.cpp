@@ -58,11 +58,13 @@ MainWindow::MainWindow(QWidget *parent)
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
 
+    /*
+
     vtkSmartPointer<vtkLight>
 
     light = vtkSmartPointer<vtkLight>::New();
     
-    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
+    //vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
     light->SetLightTypeToSceneLight();
     light->SetPosition(3,3,3);
     light->SetPositional(true);
@@ -78,6 +80,8 @@ MainWindow::MainWindow(QWidget *parent)
     light->SetAmbientColor(1, 1, 1);
     light->SetSpecularColor(1, 1, 1);
     light->SetIntensity(0.5);
+
+    */
 
     // Connecting Slots and signals of UI elements
     connect( ui->pushButton, &QPushButton::released, this, &MainWindow::handleButton );
@@ -98,12 +102,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    ModelPart* childItem = new ModelPart({ name,visible,R,G,B });
     ModelPart* childItem = new ModelPart({ name,visible,R,G,B, 0., 100., 0., 100., 0., 100., 100 });
     childItem->empty_node = true;
     rootItem->appendChild(childItem);
 
-    renderer->AddLight(light);
+    //renderer->AddLight(light);
     //adds the light to the renderer
 
     /* Test to check if tree view works
@@ -302,7 +305,6 @@ void MainWindow::on_actionItems_Options_triggered()
         double n_R = dialog.get_R();
         double n_G = dialog.get_G();
         double n_B = dialog.get_B();    
-        double n_B = dialog.get_B();
         float minX = dialog.get_MinX();
         float maxX = dialog.get_MaxX();
         float minY = dialog.get_MinY();
@@ -548,7 +550,7 @@ void MainWindow::updateRender() {
     renderer->GetActiveCamera()->Azimuth(30);
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
-    renderer->AddLight(light);
+    //renderer->AddLight(light);
 
 
     if (VR_ON == 1)
