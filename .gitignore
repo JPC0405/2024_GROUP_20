@@ -500,6 +500,7 @@ build/
 Build/
 !build.xml
 latex/
+html/
 
 
 # End of https://www.toptal.com/developers/gitignore/api/git,c++,qt,visualstudio

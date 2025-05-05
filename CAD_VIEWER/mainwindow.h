@@ -10,9 +10,28 @@
 #include <QMainWindow>
 #include "Modelpart.h"
 #include "ModelpartList.h"
+#include "VRRenderThread.h"
 #include <vtkRenderer.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkLight.h>
+
+/* Project headers */
+
+/* Qt headers */
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
+
+/* Vtk headers */
+#include <vtkActor.h>
+#include <vtkOpenVRRenderWindow.h>
+#include <vtkOpenVRRenderWindowInteractor.h>
+#include <vtkOpenVRRenderer.h>
+#include <vtkOpenVRCamera.h>
+#include <vtkActorCollection.h>
+#include <vtkCommand.h>
+#include <vtkSkybox.h>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -30,23 +49,19 @@ class MainWindow : public QMainWindow
 
 public:
     /*!
-     * Constructor
-     * \param parent widget is set to null
-     */
+    * Constructor
+    * \param parent widget is set to null
+    */
     MainWindow(QWidget *parent = nullptr);
     /*! Destructor
     */
     ~MainWindow();
-    /*!
-     * \brief The function updates the vtk to change it to the current values
-    */
     void updateRender();
-    /*!
-     * \brief UpdateRenderFromTree
-     * Updates the index in the tree
-     * \param index the item number in the tree
-     */
     void UpdateRenderFromTree(const QModelIndex& index);
+
+    void AddVRActors( const QModelIndex& index);
+
+
     /*!
      * \brief updateChildren
      * Updates the values of the vis, r, g and b
@@ -56,59 +71,41 @@ public:
      * \param g the green value of the colour of the item
      * \param b the blue value of the colour of the item
      */
-    void updateChildren(ModelPart* parent, bool vis, double r, double g, double b);
+    void updateChildren(ModelPart* parent, bool vis, double r, double g, double b, float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, float size);
 
 private:
 
     Ui::MainWindow *ui; /*!< Pointer to the ui>*/
     ModelPartList* partList; /*!< Pointer to the ModelPartList file>*/
-
     vtkSmartPointer<vtkRenderer> renderer; /*!< Pointer to the vtk renderer>*/
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;/*!< Pointer to the vtk generic open GL renderer window >*/
+    bool VR_ON = 0;
+    vtkSmartPointer<vtkSkybox> skyboxActor;
+    VRRenderThread* VRthread;
 
     vtkSmartPointer<vtkLight> light;
 
 public slots:
-    /*!
-     * \brief handleButton
-     * The function for when the button is pressed
-     */
     void handleButton();
-    /*!
-     * \brief handleTreeClick
-     * The function for when the tree is clicked and emits a message for which item is selected
-     */
     void handleTreeClick();
 
 
 signals:
-    /*!
-     * \brief statusUpdateMessage
-     * The signal emits an updated message to the status bar
-     * \param message the message emitted
-     * \param timeout how long the message stays there
-     */
     void statusUpdateMessage(const QString & message, int timeout);
 
 private slots:
-    /*!
-     * \brief on_actionOpen_File_triggered
-     * Opens a file and releases the name of the file to the status bar.
-     * In addition, opens the STL file to the renderer with predetermined rgb and vis values
-     */
     void on_actionOpen_File_triggered();
-    /*!
-     * \brief on_pushButton_2_clicked
-     * Opens a dialog to set the rgb values and vis value and applies them to the rendered STL file
-     */
     void on_pushButton_2_clicked();
-    /*!
-     * \brief on_actionItems_Options_triggered
-     * Emits a message to the status bar that the action has been clicked
-     */
     void on_actionItems_Options_triggered();
 
 
 
+    void on_pushButton_3_clicked();
+
 };
+
+
+
 #endif // MAINWINDOW_H
+
+
