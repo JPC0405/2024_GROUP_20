@@ -12,6 +12,7 @@
 #include "ModelpartList.h"
 #include <vtkRenderer.h>
 #include <vtkGenericOpenGLRenderWindow.h>
+#include <vtkLight.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -65,6 +66,8 @@ private:
     vtkSmartPointer<vtkRenderer> renderer; /*!< Pointer to the vtk renderer>*/
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;/*!< Pointer to the vtk generic open GL renderer window >*/
 
+    vtkSmartPointer<vtkLight> light;
+
 public slots:
     /*!
      * \brief handleButton
@@ -104,5 +107,8 @@ private slots:
      * Emits a message to the status bar that the action has been clicked
      */
     void on_actionItems_Options_triggered();
+
+
+
 };
 #endif // MAINWINDOW_H

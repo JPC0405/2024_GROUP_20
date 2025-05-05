@@ -27,6 +27,7 @@
 #include <vtkSTLReader.h>
 #include <vtkColor.h>
 
+
 class ModelPart {
 public:
     /** Constructor
@@ -103,7 +104,6 @@ public:
     unsigned char getColourR();
     unsigned char getColourG();
     unsigned char getColourB();
-
     /** Set visible flag
       * @param isVisible sets visible/non-visible
       */
@@ -123,7 +123,6 @@ public:
       * @return pointer to default actor for GUI rendering
       */
     vtkSmartPointer<vtkActor> getActor();
-
     /** Return new actor for use in VR
       * @return pointer to new actor
       */

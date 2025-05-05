@@ -16,6 +16,7 @@
 #include <vtkProperty.h>
 
 
+
 /*!
  * \brief ModelPart::ModelPart
  * Constructor
@@ -186,7 +187,6 @@ unsigned char ModelPart::getColourB() {
     // Returns the G data val from column 4 
     return m_itemData.at(4).toInt();
 }
-
 /*!
  * \brief ModelPart::setVisible
  * Sets the visibility for the part
@@ -240,7 +240,6 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
     // Returns the actor of the part
     return actor;
 }
-
 //vtkActor* ModelPart::getNewActor() {
     /* This is a placeholder function that you will need to modify if you want to use it
      * 

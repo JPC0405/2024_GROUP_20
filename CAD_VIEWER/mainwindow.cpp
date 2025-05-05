@@ -64,18 +64,19 @@ MainWindow::MainWindow(QWidget *parent)
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
 
-    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
+    vtkSmartPointer<vtkLight>
+
+    light = vtkSmartPointer<vtkLight>::New();
     light->SetLightTypeToSceneLight();
-    light->SetPosition(5, 5, 15);
+    light->SetPosition(3,3,3);
     light->SetPositional(true);
     light->SetConeAngle(10);
-    light->SetFocalPoint(0, 0, 0);
-    light->SetDiffuseColor(1, 1, 1);
-    light->SetAmbientColor(1, 1, 1);
-    light->SetSpecularColor(1, 1, 1);
-    light->SetIntensity(0.5);
-
-    renderer->AddLight( light );
+    light->SetFocalPoint(0,0,0);
+    light->SetAmbientColor(0.8,0.8,0.8);
+    light->SetDiffuseColor(0.5,0.6,0.5);
+    light->SetSpecularColor(0.7,0.7,0.7);
+    light->SetIntensity(0.9);
+    // Adds a light and sets its properties
 
     // Connecting Slots and signals of UI elements
     connect( ui->pushButton, &QPushButton::released, this, &MainWindow::handleButton );
@@ -94,8 +95,12 @@ MainWindow::MainWindow(QWidget *parent)
     qint64 G(0);
     qint64 B(35);
 
+
     ModelPart* childItem = new ModelPart({ name,visible,R,G,B });
     rootItem->appendChild(childItem);
+
+    renderer->AddLight(light);
+    //adds the light to the renderer
 
     /* Test to check if tree view works
     for (int i =0; i<3; i++){
@@ -221,13 +226,13 @@ void MainWindow::on_pushButton_2_clicked()
     qint64 G = selectedPart->getColourG();
     qint64 B = selectedPart->getColourB();
 
+
     // Set accessed data in dialog box
     dialog.setVisibility(vis);
     dialog.set_name(name);
     dialog.set_R(R);
     dialog.set_G(G);
-    dialog.set_B(B);
-
+    dialog.set_B(B); 
     // if the accept button is pressed
     if (dialog.exec() == QDialog::Accepted){
         emit statusUpdateMessage(QString("Dialog accepted"), 0);
@@ -238,18 +243,17 @@ void MainWindow::on_pushButton_2_clicked()
         QString n_name = dialog.get_name();
         double n_R = dialog.get_R();
         double n_G = dialog.get_G();
-        double n_B = dialog.get_B();
-
+        double n_B = dialog.get_B();    
         // update the selected item
         selectedPart->setVisible(n_vis);
         selectedPart->setName(n_name);
         selectedPart->setColour(n_R,n_G,n_B);
-
         // if an actor for the model part exists
         if (selectedPart->getActor()) {
             // Set the colour and visibility
             selectedPart->getActor()->GetProperty()->SetColor(n_R / 255, n_G / 255, n_B / 255);
             selectedPart->getActor()->SetVisibility(n_vis);
+
         }
 
 
@@ -326,6 +330,7 @@ void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g,
         childPart->setVisible(vis);
         childPart->setColour(r,g,b);
 
+
         // if the model part has an actor set colour and visibility
         if (childPart->getActor())
         {
@@ -337,7 +342,6 @@ void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g,
         updateChildren(childPart, vis, r, g, b);
     }
 }
-
 /*!
  * \brief MainWindow::updateRender
  * Refreshes the renderer so all actors are set to default
@@ -355,6 +359,7 @@ void MainWindow::updateRender() {
     renderer->GetActiveCamera()->Azimuth(30);
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
+    renderer->AddLight(light);
 
 }
 
