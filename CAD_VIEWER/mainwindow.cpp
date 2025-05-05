@@ -220,8 +220,6 @@ void MainWindow::on_pushButton_2_clicked()
 
         updateRender();
 
-        //update child items
-        updateChildren(selectedPart, vis, n_R, n_G, n_B, minX, maxX, minY, maxY, minZ, maxZ, sizeF);
 
     }
 
