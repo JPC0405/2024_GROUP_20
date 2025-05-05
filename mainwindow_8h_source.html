@@ -123,36 +123,39 @@ $(document).ready(function(){initNavTree('mainwindow_8h_source.html',''); initRe
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;vtkOpenVRCamera.h&gt;</span></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &lt;vtkActorCollection.h&gt;</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#include &lt;vtkCommand.h&gt;</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>QT_BEGIN_NAMESPACE</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">namespace </span>Ui {</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">class </span><a class="code hl_class" href="classMainWindow.html">MainWindow</a>;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>}</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>QT_END_NAMESPACE</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="foldopen" id="foldopen00033" data-start="{" data-end="};">
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="classMainWindow.html">   33</a></span><span class="keyword">class </span><a class="code hl_class" href="classMainWindow.html">MainWindow</a> : <span class="keyword">public</span> QMainWindow</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>{</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    Q_OBJECT</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <a class="code hl_class" href="classMainWindow.html">MainWindow</a>(QWidget *parent = <span class="keyword">nullptr</span>);</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <a class="code hl_class" href="classMainWindow.html">~MainWindow</a>();</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordtype">void</span> updateRender();</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordtype">void</span> UpdateRenderFromTree(<span class="keyword">const</span> QModelIndex&amp; index);</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">void</span> AddVRActors( <span class="keyword">const</span> QModelIndex&amp; index);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &lt;vtkSkybox.h&gt;</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>QT_BEGIN_NAMESPACE</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">namespace </span>Ui {</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">class </span><a class="code hl_class" href="classMainWindow.html">MainWindow</a>;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>}</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>QT_END_NAMESPACE</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="foldopen" id="foldopen00035" data-start="{" data-end="};">
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="classMainWindow.html">   35</a></span><span class="keyword">class </span><a class="code hl_class" href="classMainWindow.html">MainWindow</a> : <span class="keyword">public</span> QMainWindow</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>{</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    Q_OBJECT</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <a class="code hl_class" href="classMainWindow.html">MainWindow</a>(QWidget *parent = <span class="keyword">nullptr</span>);</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <a class="code hl_class" href="classMainWindow.html">~MainWindow</a>();</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordtype">void</span> updateRender();</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">void</span> UpdateRenderFromTree(<span class="keyword">const</span> QModelIndex&amp; index);</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classMainWindow.html#a2aeec95f4ce144734afc6b784b506332">updateChildren</a>(<a class="code hl_class" href="classModelPart.html">ModelPart</a>* parent, <span class="keywordtype">bool</span> vis, <span class="keywordtype">double</span> r, <span class="keywordtype">double</span> g, <span class="keywordtype">double</span> b);</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordtype">void</span> AddVRActors( <span class="keyword">const</span> QModelIndex&amp; index);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classMainWindow.html#a3010bbeebe63681b2cab64a583d16548">updateChildren</a>(<a class="code hl_class" href="classModelPart.html">ModelPart</a>* parent, <span class="keywordtype">bool</span> vis, <span class="keywordtype">double</span> r, <span class="keywordtype">double</span> g, <span class="keywordtype">double</span> b, <span class="keywordtype">float</span> xmin, <span class="keywordtype">float</span> xmax, <span class="keywordtype">float</span> ymin, <span class="keywordtype">float</span> ymax, <span class="keywordtype">float</span> zmin, <span class="keywordtype">float</span> zmax, <span class="keywordtype">float</span> size);</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    Ui::MainWindow *ui; </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <a class="code hl_class" href="classModelPartList.html">ModelPartList</a>* partList; </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    vtkSmartPointer&lt;vtkRenderer&gt; renderer; </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    vtkSmartPointer&lt;vtkGenericOpenGLRenderWindow&gt; renderWindow;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordtype">bool</span> VR_ON = 0;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    Ui::MainWindow *ui; </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <a class="code hl_class" href="classModelPartList.html">ModelPartList</a>* partList; </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    vtkSmartPointer&lt;vtkRenderer&gt; renderer; </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    vtkSmartPointer&lt;vtkGenericOpenGLRenderWindow&gt; renderWindow;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordtype">bool</span> VR_ON = 0;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    vtkSmartPointer&lt;vtkSkybox&gt; skyboxActor;</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <a class="code hl_class" href="classVRRenderThread.html">VRRenderThread</a>* VRthread;</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="keyword">public</span> slots:</div>
@@ -177,10 +180,10 @@ $(document).ready(function(){initNavTree('mainwindow_8h_source.html',''); initRe
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
 <div class="ttc" id="aVRRenderThread_8h_html"><div class="ttname"><a href="VRRenderThread_8h.html">VRRenderThread.h</a></div></div>
-<div class="ttc" id="aclassMainWindow_html"><div class="ttname"><a href="classMainWindow.html">MainWindow</a></div><div class="ttdef"><b>Definition</b> mainwindow.h:34</div></div>
-<div class="ttc" id="aclassMainWindow_html_a132f0e713c1a2e43662407ad9858f933"><div class="ttname"><a href="classMainWindow.html#a132f0e713c1a2e43662407ad9858f933">MainWindow::handleButton</a></div><div class="ttdeci">void handleButton()</div><div class="ttdoc">MainWindow::on_actionOpen_File_triggered When the open file action is triggered, a message is emitted...</div><div class="ttdef"><b>Definition</b> mainwindow.cpp:167</div></div>
-<div class="ttc" id="aclassMainWindow_html_a2aeec95f4ce144734afc6b784b506332"><div class="ttname"><a href="classMainWindow.html#a2aeec95f4ce144734afc6b784b506332">MainWindow::updateChildren</a></div><div class="ttdeci">void updateChildren(ModelPart *parent, bool vis, double r, double g, double b)</div><div class="ttdoc">updateChildren Updates the values of the vis, r, g and b</div><div class="ttdef"><b>Definition</b> mainwindow.cpp:480</div></div>
-<div class="ttc" id="aclassMainWindow_html_a881c9312ae7d4cff66ff3b63f2616a62"><div class="ttname"><a href="classMainWindow.html#a881c9312ae7d4cff66ff3b63f2616a62">MainWindow::handleTreeClick</a></div><div class="ttdeci">void handleTreeClick()</div><div class="ttdoc">MainWindow::handleTreeClick Emits a message saying which part of the treeview was clicked.</div><div class="ttdef"><b>Definition</b> mainwindow.cpp:146</div></div>
+<div class="ttc" id="aclassMainWindow_html"><div class="ttname"><a href="classMainWindow.html">MainWindow</a></div><div class="ttdef"><b>Definition</b> mainwindow.h:36</div></div>
+<div class="ttc" id="aclassMainWindow_html_a132f0e713c1a2e43662407ad9858f933"><div class="ttname"><a href="classMainWindow.html#a132f0e713c1a2e43662407ad9858f933">MainWindow::handleButton</a></div><div class="ttdeci">void handleButton()</div><div class="ttdoc">MainWindow::on_actionOpen_File_triggered When the open file action is triggered, a message is emitted...</div><div class="ttdef"><b>Definition</b> mainwindow.cpp:164</div></div>
+<div class="ttc" id="aclassMainWindow_html_a3010bbeebe63681b2cab64a583d16548"><div class="ttname"><a href="classMainWindow.html#a3010bbeebe63681b2cab64a583d16548">MainWindow::updateChildren</a></div><div class="ttdeci">void updateChildren(ModelPart *parent, bool vis, double r, double g, double b, float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, float size)</div><div class="ttdoc">updateChildren Updates the values of the vis, r, g and b</div><div class="ttdef"><b>Definition</b> mainwindow.cpp:482</div></div>
+<div class="ttc" id="aclassMainWindow_html_a881c9312ae7d4cff66ff3b63f2616a62"><div class="ttname"><a href="classMainWindow.html#a881c9312ae7d4cff66ff3b63f2616a62">MainWindow::handleTreeClick</a></div><div class="ttdeci">void handleTreeClick()</div><div class="ttdoc">MainWindow::handleTreeClick Emits a message saying which part of the treeview was clicked.</div><div class="ttdef"><b>Definition</b> mainwindow.cpp:143</div></div>
 <div class="ttc" id="aclassModelPartList_html"><div class="ttname"><a href="classModelPartList.html">ModelPartList</a></div><div class="ttdef"><b>Definition</b> ModelPartList.h:24</div></div>
 <div class="ttc" id="aclassModelPart_html"><div class="ttname"><a href="classModelPart.html">ModelPart</a></div><div class="ttdef"><b>Definition</b> ModelPart.h:39</div></div>
 <div class="ttc" id="aclassVRRenderThread_html"><div class="ttname"><a href="classVRRenderThread.html">VRRenderThread</a></div><div class="ttdef"><b>Definition</b> VRRenderThread.h:36</div></div>
