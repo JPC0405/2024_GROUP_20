@@ -2,6 +2,7 @@ var classModelPartList =
 [
     [ "ModelPartList", "classModelPartList.html#a039afc4b526b377bd346e8ea5b2d027d", null ],
     [ "~ModelPartList", "classModelPartList.html#a9c45a4e506f201c312f65a4c94ab4650", null ],
+    [ "appendChild", "classModelPartList.html#ac687a2942c6e8b8b23df36c32a0deaeb", null ],
     [ "columnCount", "classModelPartList.html#a4a6ebf42f2f1c5c0242154d093295756", null ],
     [ "data", "classModelPartList.html#a60923d947a2eafb5dfabe1cf8461807e", null ],
     [ "flags", "classModelPartList.html#ac28fbfeaf57aafc946127db8225c00b5", null ],
