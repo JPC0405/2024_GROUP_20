@@ -1,3 +1,9 @@
+/*! @file mainwindow.h
+ *
+ *  The header file's purpose is to make the functions used to create the applications for the ui.
+ *
+ *  Jay Chauhan, Charles Egan and Jacob Moore 2025
+ */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -7,6 +13,7 @@
 #include "VRRenderThread.h"
 #include <vtkRenderer.h>
 #include <vtkGenericOpenGLRenderWindow.h>
+#include <vtkLight.h>
 
 /* Project headers */
 
@@ -31,13 +38,23 @@ namespace Ui {
 class MainWindow;
 }
 QT_END_NAMESPACE
-
+/*! \class MainWindow
+ *  \brief The MainWindow class intialises the main window and its components for the application and for it to work with VTK
+ *  In the MainWindow class, it connects the components from the ModelPartList and the vtk renderer to the MainWindow for the user to be able to interact with the ui.
+ *  The class allows for rendering and holding of values, the user to perform file actions and button interactions on the ui.
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
+    /*!
+    * Constructor
+    * \param parent widget is set to null
+    */
     MainWindow(QWidget *parent = nullptr);
+    /*! Destructor
+    */
     ~MainWindow();
     void updateRender();
     void UpdateRenderFromTree(const QModelIndex& index);
@@ -66,6 +83,8 @@ private:
     vtkSmartPointer<vtkSkybox> skyboxActor;
     VRRenderThread* VRthread;
 
+    vtkSmartPointer<vtkLight> light;
+
 public slots:
     void handleButton();
     void handleTreeClick();
@@ -78,7 +97,11 @@ private slots:
     void on_actionOpen_File_triggered();
     void on_pushButton_2_clicked();
     void on_actionItems_Options_triggered();
+
+
+
     void on_pushButton_3_clicked();
+
 };
 
 

@@ -28,6 +28,12 @@
 
 
 
+
+
+/*!
+ * \brief ModelPart::ModelPart
+ * Constructor
+ */
 ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent )
     : m_itemData(data), m_parentItem(parent) {
 }
@@ -154,6 +160,8 @@ unsigned char ModelPart::getColourB() {
     // Returns the G data val from column 4 
     return m_itemData.at(4).toInt();
 }
+
+
 float ModelPart::getSize(){
     qDebug()<<"6 got size: "<<m_itemData.at(11).toFloat();
     return m_itemData.at(11).toFloat();
@@ -178,6 +186,11 @@ void ModelPart::setSize(float size){
     qDebug()<<"7 set size: "<<size;
 }
 
+/*!
+ * \brief ModelPart::setVisible
+ * Sets the visibility for the part
+ * \param isVisible A variable to show if it is visible or not
+ */
 void ModelPart::setVisible(bool isVisible) {
     // Replace data in column 1 with the vis boolean
     m_itemData.replace(1, isVisible);
@@ -334,9 +347,13 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
     return actor;
 }
 
+//vtkActor* ModelPart::getNewActor() {
+
+
 
 
 vtkSmartPointer<vtkActor> ModelPart::getNewActor() {
+
     /* This is a placeholder function that you will need to modify if you want to use it
      *
      * The default mapper/actor combination can only be used to render the part in

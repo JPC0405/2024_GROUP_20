@@ -36,6 +36,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
 
+
 class ModelPart {
 public:
     void setMapper(vtkSmartPointer<vtkDataSetMapper> inputMapper);
@@ -115,6 +116,7 @@ public:
     unsigned char getColourR();
     unsigned char getColourG();
     unsigned char getColourB();
+
     float getMinX();
     float getMaxX();
     float getMinY();
@@ -122,9 +124,6 @@ public:
     float getMinZ();
     float getMaxZ();
     float getSize();
-
-
-
 
     /** Set visible flag
       * @param isVisible sets visible/non-visible
