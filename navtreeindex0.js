@@ -83,6 +83,7 @@ var NAVTREEINDEX0 =
 "mainwindow_8h.html":[1,0,0,1],
 "mainwindow_8h_source.html":[1,0,0,1],
 "optiondialog_8cpp.html":[1,0,0,5],
+"optiondialog_8h.html":[1,0,0,6],
 "optiondialog_8h_source.html":[1,0,0,6],
 "pages.html":[]
 };
