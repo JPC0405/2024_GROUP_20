@@ -1,3 +1,10 @@
+/*! @file mainwindow.cpp
+ *
+ *  Contains the functions to display STL file, able to change variables and to see the changes on the ui
+ *  It also includes functions to allow it to be displayed on vr
+ *
+ *  Jay Chauhan, Charles Egan and Jacob Moore 2025
+ */
 #include "mainwindow.h"
 #include "VRRenderThread.h"
 #include "./ui_mainwindow.h"
@@ -21,7 +28,14 @@
 #include <vtkSmartPointer.h>
 #include <QStandardItemModel>
 
-
+/*!
+ * \brief MainWindow::MainWindow
+ * It constructs the main window
+ * It sets up the ui with the widget and vtk rendererand adds actions to interact with the ui
+ * Connects slot and signals to the ui and creates a treeview with a part list
+ *
+ * \param parent represents the parent widget of the main window
+ */
 //main window thing:
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -166,11 +180,7 @@ void MainWindow::handleTreeClick(){
 }
 
 
-/*!
- * \brief MainWindow::on_actionOpen_File_triggered
- * When the open file action is triggered, a message is emitted to the staus bar and dialog box is opened to choose a STL or txt file
- * The STL file is given standard parameters and then is rendered
- */
+
 /*!
  * \brief MainWindow::handleButton
  *  Emits a message that the button has been pressed to the status bar
@@ -358,7 +368,11 @@ void MainWindow::on_actionItems_Options_triggered()
         emit statusUpdateMessage(QString("Dialog rejected"),0);
     }
 }
-
+/*!
+ * \brief MainWindow::on_actionOpen_File_triggered
+ * When the open file action is triggered, a message is emitted to the staus bar and dialog box is opened to choose a STL or txt file
+ * The STL file is given standard parameters and then is rendered
+ */
 void MainWindow::on_actionOpen_File_triggered(){
     emit statusUpdateMessage(QString("Open File action triggered"),0);
 
@@ -462,7 +476,11 @@ void MainWindow::on_actionOpen_File_triggered(){
         }
     }
 }
-
+/*!
+ * \brief MainWindow::UpdateRenderFromTree
+ * Updates the renderer when a valid index is passed by adding the actor for the selected part
+ * \param index the index from the ModelPart
+ */
 void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
 
     //if a a valid index is passed
@@ -495,7 +513,16 @@ void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
     }
 }
 
-
+/*!
+ * \brief MainWindow::updateChildren
+ * Updates the children of the selected parent being updated
+ * This contains the visibility value and the rgb values of the parent
+ * \param parent the parent of the model part being updated
+ * \param vis the visibility value
+ * \param r the amount of red
+ * \param g the amount of green
+ * \param b the amount of blue
+ */
 void MainWindow::updateChildren(ModelPart* parent, bool vis, double r, double g, double b, float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, float size)
 {
     // for the number of children of the passed item
