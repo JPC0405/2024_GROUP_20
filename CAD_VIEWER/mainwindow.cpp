@@ -18,6 +18,7 @@
 #include <vtkImageAlgorithm.h>
 #include <vtkImageData.h>
 #include <vtkSkybox.h>
+#include <QStandardItemModel>
 
 
 
@@ -202,99 +203,32 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    /*
-    // Open dialog window
-    OptionDialog dialog(this);
-
-    // Access currently selected model part
     QModelIndex index = ui->treeView->currentIndex();
-    ModelPart *selectedPart = static_cast<ModelPart*>(index.internalPointer());
+    emit statusUpdateMessage(QString("Deleting Item"),0);
 
-    if (!selectedPart) return;
+    if (index.isValid())
+    {
+        ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
 
-    // Get data from selected part
-   // Get data from selected part
-    qDebug()<<"getting data from selected part";
-    QString name = selectedPart->data(0).toString();
-    bool vis = selectedPart->data(1).toBool();
-    qint64 R = selectedPart->getColourR();
-    qint64 G = selectedPart->getColourG();
-    qint64 B = selectedPart->getColourB();
-    float xmin = selectedPart->getMinX();
-    float xmax = selectedPart->getMaxX();
-    float ymin = selectedPart->getMinY();
-    float ymax = selectedPart->getMaxY();
-    float zmin = selectedPart->getMinZ();
-    float zmax = selectedPart->getMaxZ();
-    float size = selectedPart->getSize();
-    qDebug()<<"got data from selected part";
-
-    // Set accessed data in dialog box
-    qDebug()<<"setting data in dialog box";
-    dialog.setVisibility(vis);
-    dialog.set_name(name);
-    dialog.set_R(R);
-    dialog.set_G(G);
-    dialog.set_B(B);
-    dialog.set_Clip(xmin, xmax, ymin, ymax, zmin, zmax);
-    dialog.setSize(size);
-    qDebug()<<"3 Set size: "<<size;
-    qDebug()<<"set data in dialog box";
-
-    // if the accept button is pressed
-    if (dialog.exec() == QDialog::Accepted){
-        emit statusUpdateMessage(QString("Dialog accepted"), 0);
-
-
-        // use get functions in dialog to get users choice
-        qDebug()<<"getting user choice";
-        bool n_vis = dialog.getVisibility();
-        QString n_name = dialog.get_name();
-        double n_R = dialog.get_R();
-        double n_G = dialog.get_G();
-        double n_B = dialog.get_B();
-        float minX = dialog.get_MinX();
-        float maxX = dialog.get_MaxX();
-        float minY = dialog.get_MinY();
-        float maxY = dialog.get_MaxY();
-        float minZ = dialog.get_MinZ();
-        float maxZ = dialog.get_MaxZ();
-        float sizeF = dialog.getSize();
-        qDebug()<<"4 got size: "<<sizeF;
-        qDebug()<<"got user choice";
-
-        // update the selected item
-        qDebug()<<"updating selected item";
-        selectedPart->setVisible(n_vis);
-        selectedPart->setName(n_name);
-        selectedPart->setColour(n_R,n_G,n_B);
-        selectedPart->setClip(minX,maxX,minY,maxY,minZ,maxZ);
-        selectedPart->setSize(sizeF);
-        selectedPart->setMapper(selectedPart->applyClip());
-
-        qDebug()<<"5 set size: "<<sizeF;
-        qDebug()<<"updated selected item";
-
-
-        // if an actor for the model part exists
-        if (selectedPart->getActor()) {
-            // Set the colour and visibility
-            selectedPart->getActor()->GetProperty()->SetColor(n_R / 255, n_G / 255, n_B / 255);
-            selectedPart->getActor()->SetVisibility(n_vis);
+        if (selectedPart && selectedPart != partList->getRootItem()) 
+        {
+            QModelIndex parentIndex = index.parent();
+            int row = selectedPart->row();
+            partList->removeRow(row, parentIndex);
         }
 
+        if (selectedPart->getActor()) {
+            renderer->RemoveActor(selectedPart->getActor());
+        }
 
-        //update child items
-        updateChildren(selectedPart, vis, n_R, n_G, n_B);
+        updateRender();
 
-        
     }
 
-    // if cancel button is clicked
-    else{
-        emit statusUpdateMessage(QString("Dialog rejected"),0);
+    else 
+    {
+        emit statusUpdateMessage(QString("Cannot delete root item"), 0);
     }
-*/
 }
 
 
@@ -630,7 +564,6 @@ void MainWindow::AddVRActors(const QModelIndex& index) {
         }
     }
 }
-
 
 
 

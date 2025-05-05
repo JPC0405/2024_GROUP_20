@@ -16,6 +16,12 @@
 #include <vtkProperty.h>
 #include <vtkProperty.h>
 #include <vtkProperty.h>
+#include <QAbstractItemModel>
+#include <QModelIndex>
+#include <QString>
+#include <QVariant>
+#include <QVector>
+#include <QDebug>
 
 
 
@@ -327,6 +333,8 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
     return actor;
 }
 
+
+
 vtkSmartPointer<vtkActor> ModelPart::getNewActor() {
     /* This is a placeholder function that you will need to modify if you want to use it
      *
@@ -365,5 +373,4 @@ vtkSmartPointer<vtkActor> ModelPart::getNewActor() {
     //test
     
 }
-
 
