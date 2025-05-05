@@ -9,6 +9,11 @@
 
 #include "ModelPartList.h"
 #include "ModelPart.h"
+#include <QAbstractItemModel>  // For QAbstractItemModel and related functionality
+#include <QModelIndex>          // For QModelIndex handling
+#include <QVariant>             // For QVariant, which is used in model data
+#include <QList>                // For QList, if you're using it to store children in ModelPart
+#include <QDebug>
 
 ModelPartList::ModelPartList( const QString& data, QObject* parent ) : QAbstractItemModel(parent) {
     /* Have option to specify number of visible properties for each item in tree - the root item
@@ -16,6 +21,7 @@ ModelPartList::ModelPartList( const QString& data, QObject* parent ) : QAbstract
      */
     rootItem = new ModelPart( { tr("Part"), tr("Visible?"),tr("R"),tr("G"),tr("B"),tr("XCLIPMIN"),tr("XCLIPMAX"),tr("YCLIPMIN"),tr("YCLIPMAX"),tr("ZCLIPMIN"),tr("ZCLIPMAX"),tr("SIZE") });
 }
+
 
 
 
@@ -143,4 +149,6 @@ QModelIndex ModelPartList::appendChild(QModelIndex& parent, const QList<QVariant
 
     return child;
 }
+
+
 
