@@ -146,12 +146,15 @@ public:
       */
     vtkSmartPointer<vtkActor> getActor();
 
+    vtkSmartPointer<vtkMapper> getMapper();
+
     /** Return new actor for use in VR
       * @return pointer to new actor
       */
 
     vtkSmartPointer<vtkActor> getNewActor();
     vtkSmartPointer<vtkDataSetMapper> applyClip();
+    bool empty_node = false;
 
 
 
@@ -168,15 +171,15 @@ private:
 	/* These are vtk properties that will be used to load/render a model of this part,
 	 * commented out for now but will be used later
 	 */
-	vtkSmartPointer<vtkSTLReader>               file;               /**< Datafile from which part loaded */
-    vtkSmartPointer<vtkMapper>                  mapper;             /**< Mapper for rendering */
-    vtkSmartPointer<vtkActor>                   actor;              /**< Actor for rendering */
+	vtkSmartPointer<vtkSTLReader>               file=NULL;               /**< Datafile from which part loaded */
+    vtkSmartPointer<vtkMapper>                  mapper=NULL;             /**< Mapper for rendering */
+    vtkSmartPointer<vtkActor>                   actor=NULL;              /**< Actor for rendering */
     vtkColor3<unsigned char>                    colour;             /**< User defineable colour */
 
-    vtkSmartPointer<vtkMapper>           newMapper;
+    vtkSmartPointer<vtkMapper>                  newMapper;
     vtkSmartPointer<vtkActor>                    newActor;
     float xMin;
-    float xMax;
+    float xMax; 
 
 };  
 

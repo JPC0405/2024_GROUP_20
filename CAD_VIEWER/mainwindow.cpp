@@ -93,6 +93,7 @@ MainWindow::MainWindow(QWidget *parent)
     qint64 B(90);
 
     ModelPart* childItem = new ModelPart({ name,visible,R,G,B, 0., 100., 0., 100., 0., 100., 100 });
+    childItem->empty_node = true;
     rootItem->appendChild(childItem);
 
     /* Test to check if tree view works
@@ -315,6 +316,7 @@ void MainWindow::on_actionItems_Options_triggered()
 
     // Get data from selected part
     // Get data from selected part
+
     qDebug()<<"getting data from selected part";
     QString name = selectedPart->data(0).toString();
     bool vis = selectedPart->data(1).toBool();
@@ -346,7 +348,7 @@ void MainWindow::on_actionItems_Options_triggered()
     if (dialog.exec() == QDialog::Accepted){
         emit statusUpdateMessage(QString("Dialog accepted"), 0);
 
-
+        
         // use get functions in dialog to get users choice
         qDebug()<<"getting user choice";
         bool n_vis = dialog.getVisibility();
@@ -363,6 +365,7 @@ void MainWindow::on_actionItems_Options_triggered()
         float sizeF = dialog.getSize();
         qDebug()<<"4 got size: "<<sizeF;
         qDebug()<<"got user choice";
+        
 
         // update the selected item
         qDebug()<<"updating selected item";
@@ -371,7 +374,11 @@ void MainWindow::on_actionItems_Options_triggered()
         selectedPart->setColour(n_R,n_G,n_B);
         selectedPart->setClip(minX,maxX,minY,maxY,minZ,maxZ);
         selectedPart->setSize(sizeF);
-        selectedPart->setMapper(selectedPart->applyClip());
+        
+        if (selectedPart->empty_node==false)
+        {
+            selectedPart->setMapper(selectedPart->applyClip());
+        }
 
         qDebug()<<"5 set size: "<<sizeF;
         qDebug()<<"updated selected item";
@@ -509,8 +516,12 @@ void MainWindow::UpdateRenderFromTree(const QModelIndex& index) {
     if (index.isValid()) {
         // Add the actor for the selected part to the renderer
         ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-        renderer->AddActor(selectedPart->getActor());
-        ;
+        
+        if (selectedPart->getActor())
+        {
+            renderer->AddActor(selectedPart->getActor());
+        }
+        
     }
 
     // if no children exist for the passed item
