@@ -56,7 +56,15 @@ public:
     /*! Destructor
     */
     ~MainWindow();
+    /*!
+     * \brief The function updates the vtk to change it to the current values
+    */
     void updateRender();
+    /*!
+     * \brief UpdateRenderFromTree
+     * Updates the index in the tree
+     * \param index the item number in the tree
+     */
     void UpdateRenderFromTree(const QModelIndex& index);
 
     void AddVRActors( const QModelIndex& index);
@@ -86,16 +94,43 @@ private:
     vtkSmartPointer<vtkLight> light;
 
 public slots:
+    /*!
+     * \brief handleButton
+     * The function for when the button is pressed
+     */
     void handleButton();
+    /*!
+     * \brief handleTreeClick
+     * The function for when the tree is clicked and emits a message for which item is selected
+     */
     void handleTreeClick();
 
 
 signals:
-    void statusUpdateMessage(const QString & message, int timeout);
+    /*!
+     * \brief statusUpdateMessage
+     * The signal emits an updated message to the status bar
+     * \param message the message emitted
+     * \param timeout how long the message stays there
+     */
+     void statusUpdateMessage(const QString & message, int timeout);
 
 private slots:
+    /*!
+     * \brief on_actionOpen_File_triggered
+     * Opens a file and releases the name of the file to the status bar.
+     * In addition, opens the STL file to the renderer with predetermined rgb and vis values
+     */
     void on_actionOpen_File_triggered();
+     /*!
+     * \brief on_pushButton_2_clicked
+     * Opens a dialog to set the rgb values and vis value and applies them to the rendered STL file
+      */
     void on_pushButton_2_clicked();
+    /*!
+     * \brief on_actionItems_Options_triggered
+     * Emits a message to the status bar that the action has been clicked
+     */
     void on_actionItems_Options_triggered();
 
 
