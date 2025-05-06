@@ -29,81 +29,63 @@ set(PROJECT_SOURCES
         VRRenderThread.h
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(WS6
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-        icons.qrc
-        optiondialog.h optiondialog.cpp optiondialog.ui
-    )
+# Define the target executable
+qt_add_executable(WS6
+    MANUAL_FINALIZATION
+    ${PROJECT_SOURCES}
+)
 
-    target_link_libraries(WS6 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${VTK_LIBRARIES})
+target_link_libraries(WS6 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${VTK_LIBRARIES})
 
-    include(GNUInstallDirs)
-    install(TARGETS WS6
-        BUNDLE DESTINATION .
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
-
-    if(QT_VERSION_MAJOR EQUAL 6)
-        qt_finalize_executable(WS6)
-    endif()
-endif()
-
+# Add custom target to copy VRBindings
 add_custom_target(VRBindings)
 add_custom_command(TARGET VRBindings PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/vrbindings ${CMAKE_BINARY_DIR}/)
 
-# Copy VTK DLLs to the target directory
-set(VTK_DLLS
-    "C:/Program Files (x86)/VTK/bin/vtkIOGeometry-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkRenderingOpenVR-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkGUISupportQt-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkRenderingOpenGL2-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkIOImage-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkRenderingCore-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkFiltersSources-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkImagingCore-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkFiltersGeneral-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkFiltersCore-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkCommonExecutionModel-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkCommonColor-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkCommonDataModel-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkCommonCore-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtksys-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkFiltersHybrid-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkIOCore-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkFiltersVerdict-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkCommonTransforms-9.4d.dll"
-    "C:/Program Files (x86)/VTK/bin/vtkzlib-9.4d.dll"
+# Manual install of Qt DLLs (assuming you're using Qt5 or Qt6)
+set(QT_BIN_DIR "C:/Qt/6.8.2/msvc2022_64/bin")
+file(GLOB QT_DLLS "${QT_BIN_DIR}/*.dll")
+file(GLOB QT_PLUGINS "${QT_BIN_DIR}/../plugins/*")
+
+# Check if Qt bin directory exists and install Qt DLLs and plugins
+if(EXISTS "${QT_BIN_DIR}")
+    message(STATUS "Qt DLLs found at: ${QT_BIN_DIR}")
+    install(FILES ${QT_DLLS} DESTINATION ${CMAKE_INSTALL_BINDIR})
+    install(DIRECTORY ${QT_PLUGINS}/
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/qt/plugins
+        FILES_MATCHING PATTERN "*.dll"
+    )
+else()
+    message(FATAL_ERROR "Qt bin directory not found at: ${QT_BIN_DIR}")
+endif()
+
+# Install VTK DLLs
+set(VTK_BIN_DIR "C:/Program Files (x86)/VTK/bin")
+if(EXISTS "${VTK_BIN_DIR}")
+    file(GLOB VTK_DLLS "${VTK_BIN_DIR}/*.dll")
+    message(STATUS "VTK Libraries: ${VTK_LIBRARIES}")
+    install(FILES ${VTK_DLLS} DESTINATION ${CMAKE_INSTALL_BINDIR})
+else()
+    message(FATAL_ERROR "VTK bin directory not found at: ${VTK_BIN_DIR}")
+endif()
+
+# Install OpenVR DLLs
+set(OPENVR_DLL "C:/openvr-2.5.1/bin/win64/openvr_api.dll")
+if(EXISTS "${OPENVR_DLL}")
+    install(FILES ${OPENVR_DLL} DESTINATION ${CMAKE_INSTALL_BINDIR})
+else()
+    message(FATAL_ERROR "OpenVR DLL not found at: ${OPENVR_DLL}")
+endif()
+
+# Install the target executable
+install(TARGETS WS6
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-foreach(dll ${VTK_DLLS})
-    add_custom_command(TARGET WS6 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dll} $<TARGET_FILE_DIR:WS6>
-        COMMENT "Copying VTK DLL: ${dll}"
-    )
-endforeach()
+set(VC_REDIST_INSTALLER "C:/C++/VC_redist.x64.exe")
+install(FILES ${VC_REDIST_INSTALLER} DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-# Copy OpenVR DLL to the target directory
-set(OPENVR_DLLS
-    "C:/openvr-2.5.1/bin/win64/openvr_api.dll"
-)
-
-foreach(dll ${OPENVR_DLLS})
-    add_custom_command(TARGET WS6 POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dll} $<TARGET_FILE_DIR:WS6>
-        COMMENT "Copying OpenVR DLL: ${dll}"
-    )
-endforeach()
-
+# Package configuration
 if(WIN32)
-    find_program(WINDEPLOYQT_EXECUTABLE windeployqt REQUIRED)
-
-    add_custom_command(TARGET WS6 POST_BUILD
-        COMMAND "${WINDEPLOYQT_EXECUTABLE}" "$<TARGET_FILE:WS6>" --no-compiler-runtime
-        COMMENT "Bundling Qt dependencies with windeployqt"
-    )
     set(CPACK_GENERATOR "NSIS")
 else()
     set(CPACK_GENERATOR "ZIP")
