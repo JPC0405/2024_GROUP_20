@@ -13,22 +13,20 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(VTK REQUIRED)
 
-
-
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
-	ModelPart.cpp
-	ModelPart.h
-	ModelPartList.cpp
-	ModelPartList.h
-	icons.qrc
+        ModelPart.cpp
+        ModelPart.h
+        ModelPartList.cpp
+        ModelPartList.h
+        icons.qrc
         optiondialog.cpp
         optiondialog.h
-	VRRenderThread.cpp
-	VRRenderThread.h
+        VRRenderThread.cpp
+        VRRenderThread.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -38,50 +36,77 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         icons.qrc
         optiondialog.h optiondialog.cpp optiondialog.ui
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET WS6 APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(WS6 SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(WS6
-            ${PROJECT_SOURCES}
-        )
+
+    target_link_libraries(WS6 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${VTK_LIBRARIES})
+
+    include(GNUInstallDirs)
+    install(TARGETS WS6
+        BUNDLE DESTINATION .
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+
+    if(QT_VERSION_MAJOR EQUAL 6)
+        qt_finalize_executable(WS6)
     endif()
-endif()
-
-target_link_libraries(WS6 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${VTK_LIBRARIES})
-
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.WS6)
-endif()
-set_target_properties(WS6 PROPERTIES
-    ${BUNDLE_ID_OPTION}
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
-
-include(GNUInstallDirs)
-install(TARGETS WS6
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(WS6)
 endif()
 
 add_custom_target(VRBindings)
 add_custom_command(TARGET VRBindings PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/vrbindings ${CMAKE_BINARY_DIR}/)
+
+# Copy VTK DLLs to the target directory
+set(VTK_DLLS
+    "C:/Program Files (x86)/VTK/bin/vtkIOGeometry-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkRenderingOpenVR-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkGUISupportQt-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkRenderingOpenGL2-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkIOImage-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkRenderingCore-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkFiltersSources-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkImagingCore-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkFiltersGeneral-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkFiltersCore-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkCommonExecutionModel-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkCommonColor-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkCommonDataModel-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkCommonCore-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtksys-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkFiltersHybrid-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkIOCore-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkFiltersVerdict-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkCommonTransforms-9.4d.dll"
+    "C:/Program Files (x86)/VTK/bin/vtkzlib-9.4d.dll"
+)
+
+foreach(dll ${VTK_DLLS})
+    add_custom_command(TARGET WS6 POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dll} $<TARGET_FILE_DIR:WS6>
+        COMMENT "Copying VTK DLL: ${dll}"
+    )
+endforeach()
+
+# Copy OpenVR DLL to the target directory
+set(OPENVR_DLLS
+    "C:/openvr-2.5.1/bin/win64/openvr_api.dll"
+)
+
+foreach(dll ${OPENVR_DLLS})
+    add_custom_command(TARGET WS6 POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${dll} $<TARGET_FILE_DIR:WS6>
+        COMMENT "Copying OpenVR DLL: ${dll}"
+    )
+endforeach()
+
+if(WIN32)
+    find_program(WINDEPLOYQT_EXECUTABLE windeployqt REQUIRED)
+
+    add_custom_command(TARGET WS6 POST_BUILD
+        COMMAND "${WINDEPLOYQT_EXECUTABLE}" "$<TARGET_FILE:WS6>" --no-compiler-runtime
+        COMMENT "Bundling Qt dependencies with windeployqt"
+    )
+    set(CPACK_GENERATOR "NSIS")
+else()
+    set(CPACK_GENERATOR "ZIP")
+endif()
+
+include(CPack)

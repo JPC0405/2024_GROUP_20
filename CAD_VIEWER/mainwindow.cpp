@@ -108,7 +108,7 @@ MainWindow::MainWindow(QWidget *parent)
     ModelPart *rootItem = this->partList->getRootItem();
 
     // Instantiates the root item "Model" into the part list and tree view
-    QString name = QString("Model").arg(1);
+    QString name = QString("Model");
     QString visible("true");
     qint64 R(255);
     qint64 G(0);
